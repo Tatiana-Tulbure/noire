@@ -64,3 +64,11 @@ _starter-backup/
 
 # Figma export (local reference only)
 design-source/
+
+# Starter-kit tooling: kept locally, not part of the public NOIRÉ repo
+.claude/
+best-practice/
+CLAUDE.md
+DESIGN-SYSTEM.md
+AGENTS.md
+LICENSE
