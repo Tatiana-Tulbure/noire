@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import LegalPage, { type LegalBlock } from "../components/LegalPage.astro";
+
+const delays = [
+  "Delivery times are estimates and may vary depending on product availability, destination, and logistics.",
+  "NOIRÉ is not responsible for delays caused by:",
+  ["Shipping carriers", "Customs procedures", "Weather conditions", "Force majeure events"],
+  "Risk transfers to the customer upon successful delivery.",
+];
+
+const blocks: LegalBlock[] = [
+  { title: "1. About NOIRÉ", medium: true, body: ["NOIRÉ is an online destination for premium furniture, lighting, and interior décor. We carefully curate collections that combine timeless aesthetics, exceptional craftsmanship, and contemporary living."] },
+  { title: "2. Eligibility", body: ["To place an order, you must:", ["Be at least 18 years old.", "Provide accurate and complete information.", "Be legally capable of entering into binding contracts."]] },
+  { title: "3. Products", medium: true, body: ["We strive to present every product as accurately as possible.", "However, due to differences in screens, lighting, and manufacturing processes, colors, textures, and finishes may vary slightly from what is displayed online."] },
+  { title: "4. Pricing", body: ["All prices displayed on our website include applicable taxes unless stated otherwise.", "NOIRÉ reserves the right to:", ["Update prices without prior notice.", "Correct pricing errors.", "Cancel orders affected by obvious pricing mistakes."]] },
+  { title: "5. Orders", body: ["After placing an order, you will receive an email confirming that we have received your request.", "This confirmation does not constitute acceptance of your order.", "NOIRÉ reserves the right to refuse or cancel any order due to:", ["Product availability", "Payment issues", "Suspected fraud", "Pricing or technical errors"]] },
+  { title: "6. Payment", body: ["Payments are securely processed through trusted third-party payment providers.", "NOIRÉ never stores complete payment card information.", "Accepted payment methods are displayed during checkout."] },
+  { title: "7. Shipping & Delivery", body: delays },
+  // Figma repeats the shipping copy under "Returns & Refunds"; kept as designed
+  { title: "8. Returns & Refunds", body: delays },
+  { title: "9. Warranty", body: ["Our products are covered by applicable statutory warranties.", "The warranty does not cover:", ["Normal wear and tear", "Improper use", "Incorrect assembly", "Accidental damage", "Unauthorized repairs"]] },
+  { title: "10. User Accounts", body: ["When creating an account, you agree to:", ["Keep your password secure.", "Maintain accurate account information.", "Accept responsibility for all activities under your account."], "NOIRÉ reserves the right to suspend or terminate accounts that violate these Terms."] },
+  { title: "11. Limitation of Liability", body: ["To the maximum extent permitted by law, NOIRÉ shall not be liable for:", ["Indirect damages", "Incidental damages", "Consequential losses", "Loss of profits", "Business interruption"], "Our total liability shall never exceed the value of the purchased products."] },
+  { title: "12. Contact", body: ["For any questions regarding these Terms & Conditions, please contact us."] },
+];
+---
+
+<BaseLayout title="Terms & Conditions — NOIRÉ" description="Terms and conditions for ordering from NOIRÉ.">
+  <LegalPage title="Terms & Conditions" blocks={blocks} />
+</BaseLayout>

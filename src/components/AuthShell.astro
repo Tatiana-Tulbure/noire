@@ -1,0 +1,138 @@
+---
+import Icon from "./Icon.astro";
+import { img } from "../data/products";
+
+interface Props {
+  title: string;
+  /** Show the room photo on the right (login, new password) */
+  photo?: boolean;
+  wide?: boolean;
+}
+
+const { title, photo = true, wide = false } = Astro.props;
+const room = img("login-room");
+---
+
+<div class:list={["auth container container--padded", { "auth--wide": wide }]}>
+  <div class="auth__form">
+    <div class="auth__head">
+      <h1 class="title-xl">{title}</h1>
+      <slot name="lead" />
+    </div>
+    <slot />
+    <div class="auth__social">
+      <p class="auth__or">OR</p>
+      <div class="auth__social-btns">
+        <a class="btn btn--ghost auth__soc" href="/account/"><Icon name="social-instagram" /><span>Sign in with Instagram</span></a>
+        <a class="btn btn--ghost auth__soc" href="/account/"><Icon name="social-facebook" /><span>Sign in with Facebook</span></a>
+      </div>
+    </div>
+  </div>
+  {photo && (
+    <img class="auth__photo" src={room.src} width={room.width} height={room.height} alt="Rose velvet armchair under a spotlight in a dark room" />
+  )}
+</div>
+
+<script>
+  import "../scripts/forms.ts";
+</script>
+
+<style>
+  /* Figma "login_content": 608px form column, 1024px photo on the right */
+  .auth {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 3.75em;
+    margin-top: 4.75em; /* content at y171 */
+  }
+
+  .auth__form {
+    display: flex;
+    flex-direction: column;
+    gap: 2.75em; /* 44px */
+    width: 38em; /* 608px */
+    padding-top: 1.0625em;
+  }
+
+  .auth--wide .auth__form {
+    width: 46.125em; /* 738px */
+    padding-top: 0;
+  }
+
+  .auth__head {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+  }
+
+  .auth__photo {
+    width: 64em; /* 1024px */
+    height: 64em;
+    object-fit: cover;
+    margin-top: 1.0625em;
+  }
+
+  .auth__social {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+    margin-top: -1.25em; /* Figma: 24px under the main button */
+  }
+
+  .auth__or {
+    font-size: 1.125em;
+    line-height: 1.333;
+    letter-spacing: -0.36px;
+    color: #ffffff;
+    text-align: center;
+  }
+
+  .auth__social-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5em;
+  }
+
+  .auth__soc {
+    gap: 0.5em;
+    padding-inline: 1em;
+    color: var(--color-text);
+  }
+
+  .auth__soc span {
+    font-size: 1.125em;
+    font-weight: 400;
+    letter-spacing: -0.36px;
+  }
+
+  @media (max-width: 991px) {
+    .auth {
+      flex-direction: column;
+      margin-top: 3em;
+    }
+
+    .auth__form,
+    .auth--wide .auth__form {
+      width: 100%;
+    }
+
+    .auth__photo {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .auth .title-xl {
+      font-size: 3em;
+      letter-spacing: -0.96px;
+    }
+
+    .auth__social-btns {
+      grid-template-columns: 1fr;
+      gap: 0.75em;
+    }
+  }
+</style>

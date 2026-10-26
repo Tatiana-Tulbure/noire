@@ -1,0 +1,151 @@
+---
+import Icon from "./Icon.astro";
+import { img, euroPrefix, type Product } from "../data/products";
+
+interface Props {
+  product: Product;
+  /** Lazy-load the image (below the fold) */
+  lazy?: boolean;
+  class?: string;
+}
+
+const { product, lazy = true, class: className } = Astro.props;
+const image = img(product.image);
+const href = `/product/${product.slug}/`;
+---
+
+<article class:list={["card", className]} data-slug={product.slug}>
+  <button class="card__wish" type="button" data-wish={product.slug} aria-pressed="false" aria-label={`Add ${product.name} to wishlist`}>
+    <Icon name="heart" class="icon-off" />
+    <Icon name="heart-filled" class="icon-on" />
+  </button>
+  <a class="card__link" href={href}>
+    <img
+      class="card__img"
+      src={image.src}
+      width={image.width}
+      height={image.height}
+      alt={product.name}
+      loading={lazy ? "lazy" : "eager"}
+      decoding="async"
+    />
+    <span class="card__meta">
+      <span class="card__name">{product.name}</span>
+      <span class="card__price">{euroPrefix(product.price)}</span>
+    </span>
+  </a>
+</article>
+
+<style>
+  /* Figma "component_new_arrivals": 1px border, 24px padding, heart 30px, image + name row */
+  .card {
+    --card-img-h: 26.5em; /* 424px */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5em;
+    border: 1px solid var(--color-border);
+    transition: border-color var(--transition-fast);
+  }
+
+  .card:hover {
+    border-color: rgba(255, 250, 250, 0.6);
+  }
+
+  .card__wish {
+    position: absolute;
+    top: 1.5em;
+    right: 1.5em;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+  }
+
+  .card__wish :global(.icon-on) {
+    display: none;
+  }
+
+  .card__wish[aria-pressed="true"] :global(.icon-on) {
+    display: block;
+    width: 1.875em;
+    height: 1.875em;
+  }
+
+  .card__wish[aria-pressed="true"] :global(.icon-off) {
+    display: none;
+  }
+
+  .card__wish:hover :global(.icon-off path) {
+    stroke-opacity: 1;
+  }
+
+  .card__link {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding-top: 2.375em; /* 30px heart + 8px gap */
+  }
+
+  .card__img {
+    width: 100%;
+    height: var(--card-img-h);
+    object-fit: cover;
+  }
+
+  .card__meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1em;
+    margin-top: auto;
+  }
+
+  .card__name {
+    font-size: 1.25em;
+    line-height: 1.35;
+    letter-spacing: -0.4px;
+    text-transform: uppercase;
+    color: var(--color-white);
+  }
+
+  .card__price {
+    flex-shrink: 0;
+    font-size: 1.125em;
+    line-height: 1.333;
+    letter-spacing: -0.36px;
+    color: var(--color-text);
+  }
+
+  @media (max-width: 991px) {
+    .card {
+      --card-img-h: 18em;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .card {
+      --card-img-h: 12.75em; /* 204px — Figma mobile card */
+      padding: 0.75em;
+    }
+
+    .card__wish {
+      top: 0.75em;
+      right: 0.75em;
+      min-width: 2.75em;
+      min-height: 2.75em;
+      margin: -0.5em;
+    }
+
+    .card__link {
+      padding-top: 2.25em;
+    }
+
+    .card__name {
+      font-size: 1em;
+    }
+
+    .card__price {
+      font-size: 0.875em;
+    }
+  }
+</style>

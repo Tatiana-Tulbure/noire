@@ -1,0 +1,99 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CheckoutShell from "../../components/CheckoutShell.astro";
+import Field from "../../components/Field.astro";
+import Icon from "../../components/Icon.astro";
+
+const countries = ["Switzerland", "Germany", "France", "Italy", "Austria", "Romania", "Moldova", "United Kingdom", "United States"];
+---
+
+<BaseLayout title="Shipping details — NOIRÉ checkout" description="Enter your delivery details.">
+  <CheckoutShell step={1} summary="edit">
+    <div class="ship__head">
+      <h1 class="title-lg">Shipping details</h1>
+      <p class="text-body">Already have an account? <a class="accent-link" href="/login/">Login</a> or  <a class="accent-link" href="/register/">Register</a></p>
+    </div>
+
+    <p class="text-body ship__empty" data-ship-empty hidden>
+      Your cart is empty. <a class="accent-link" href="/collection/">Continue shopping</a>
+    </p>
+
+    <form class="ship" data-demo-form data-next="/checkout/payment/" data-ship-form>
+      <div class="ship__fields">
+        <Field label="Name" name="name" autocomplete="given-name" required />
+        <Field label="Surname" name="surname" autocomplete="family-name" required />
+        <Field label="Email" name="email" type="email" autocomplete="email" required />
+        <Field label="Phone number" name="phone" type="tel" autocomplete="tel" required />
+        <Field label="Country" name="country" options={countries} autocomplete="country-name" required />
+        <Field label="City" name="city" autocomplete="address-level2" required />
+        <Field label="Address 1" name="address1" autocomplete="address-line1" required />
+        <Field label="Address 2 (optional)" name="address2" autocomplete="address-line2" />
+        <Field label="Postal code" name="postal" autocomplete="postal-code" required />
+      </div>
+      <label class="check ship__save">
+        <input type="checkbox" name="save-address" />
+        <span class="check__box">
+          <Icon name="checkbox" class="icon-off" />
+          <Icon name="checkbox-checked" class="icon-on" />
+        </span>
+        <span class="check__text">Save address</span>
+      </label>
+      <div class="ship__btns">
+        <button class="btn btn--ghost" type="button" data-cart-open><span>BACK TO CART</span></button>
+        <button class="btn btn--light" type="submit"><span>GO TO PAYMENT</span></button>
+      </div>
+    </form>
+  </CheckoutShell>
+</BaseLayout>
+
+<script>
+  import "../../scripts/forms.ts";
+
+  document.addEventListener("noire:summary", (e) => {
+    const empty = (e as CustomEvent).detail.count === 0;
+    document.querySelector<HTMLElement>("[data-ship-empty]")!.hidden = !empty;
+    document.querySelector<HTMLElement>("[data-ship-form]")!.hidden = empty;
+  });
+</script>
+
+<style>
+  .ship__head {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    margin-bottom: -1.25em;
+  }
+
+  .ship {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+  }
+
+  .ship__fields {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25em;
+  }
+
+  .ship__btns {
+    display: grid;
+    grid-template-columns: 14.8125em 1fr; /* 237px + 477px */
+    gap: 1.25em;
+    margin-top: 0.5em;
+  }
+
+  @media (max-width: 479px) {
+    .ship__head .title-lg {
+      font-size: 3em;
+    }
+
+    .ship__btns {
+      grid-template-columns: 1fr;
+    }
+
+    .ship__btns .btn:last-child {
+      order: -1;
+    }
+  }
+</style>

@@ -1,0 +1,174 @@
+{
+ "hero-chair": {
+  "w": 1600,
+  "h": 1997
+ },
+ "balance-bg": {
+  "w": 1600,
+  "h": 2000
+ },
+ "balance-chair": {
+  "w": 1600,
+  "h": 2000
+ },
+ "essence-white-chair": {
+  "w": 1785,
+  "h": 1785
+ },
+ "essence-pink-chair": {
+  "w": 1640,
+  "h": 1595
+ },
+ "collection-hero": {
+  "w": 1000,
+  "h": 1000
+ },
+ "login-room": {
+  "w": 1024,
+  "h": 1024
+ },
+ "order-lounge-chair": {
+  "w": 800,
+  "h": 800
+ },
+ "product-fat-lounge-chair": {
+  "w": 1400,
+  "h": 1400
+ },
+ "fat-detail-1": {
+  "w": 600,
+  "h": 600
+ },
+ "fat-detail-2": {
+  "w": 600,
+  "h": 600
+ },
+ "fat-detail-3": {
+  "w": 600,
+  "h": 600
+ },
+ "fat-color-1": {
+  "w": 600,
+  "h": 600
+ },
+ "fat-color-2": {
+  "w": 600,
+  "h": 600
+ },
+ "fat-color-3": {
+  "w": 600,
+  "h": 600
+ },
+ "fat-color-4": {
+  "w": 600,
+  "h": 600
+ },
+ "product-cloud-boucle-armchair": {
+  "w": 1200,
+  "h": 553
+ },
+ "product-luca-chairs": {
+  "w": 1200,
+  "h": 550
+ },
+ "product-navy-velvet-dining-chair": {
+  "w": 1200,
+  "h": 1200
+ },
+ "product-blush-curve-sofa": {
+  "w": 1200,
+  "h": 944
+ },
+ "product-bloom-pouf": {
+  "w": 1200,
+  "h": 675
+ },
+ "product-pheaby-chairs": {
+  "w": 774,
+  "h": 684
+ },
+ "product-rows-table": {
+  "w": 500,
+  "h": 500
+ },
+ "product-pheaby-chairs-walnut": {
+  "w": 1000,
+  "h": 719
+ },
+ "product-getluky-chair": {
+  "w": 1000,
+  "h": 1000
+ },
+ "product-roc-keyvisual-chair": {
+  "w": 1000,
+  "h": 1000
+ },
+ "product-swivel-accent-chair": {
+  "w": 1000,
+  "h": 1333
+ },
+ "product-fat-2-5-seater": {
+  "w": 1120,
+  "h": 628
+ },
+ "product-fat-work-chair": {
+  "w": 1000,
+  "h": 1000
+ },
+ "product-luca-chairs-rose": {
+  "w": 1200,
+  "h": 1200
+ },
+ "product-bubble-lounge-chair": {
+  "w": 1120,
+  "h": 628
+ },
+ "product-orbit-swivel-chair": {
+  "w": 1200,
+  "h": 1200
+ },
+ "product-luna-swivel-chair": {
+  "w": 1120,
+  "h": 628
+ },
+ "product-riva-lounge-chair": {
+  "w": 1080,
+  "h": 902
+ },
+ "product-sienna-lounge-chair": {
+  "w": 1120,
+  "h": 628
+ },
+ "product-arc-dining-chair": {
+  "w": 1200,
+  "h": 675
+ },
+ "product-roll-sofa": {
+  "w": 1200,
+  "h": 1200
+ },
+ "product-modulo-corner-sofa": {
+  "w": 500,
+  "h": 500
+ },
+ "product-velvet-sculpted-armchair": {
+  "w": 1200,
+  "h": 675
+ },
+ "product-roll-mustard-chair": {
+  "w": 1000,
+  "h": 1333
+ },
+ "product-emerald-shell-armchair": {
+  "w": 1200,
+  "h": 1200
+ },
+ "product-olive-classic-sofa": {
+  "w": 1200,
+  "h": 1200
+ },
+ "404-graphic": {
+  "w": 1400,
+  "h": 916
+ }
+}

@@ -1,0 +1,180 @@
+---
+import Icon from "./Icon.astro";
+---
+
+<div class="cart" id="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-title" hidden>
+  <div class="cart__backdrop" data-cart-close></div>
+  <div class="cart__panel">
+    <div class="cart__head">
+      <h2 class="title-md" id="cart-title">My cart</h2>
+      <button class="cart__close" type="button" data-cart-close aria-label="Close cart">
+        <Icon name="close" />
+      </button>
+    </div>
+
+    <div class="cart__filled" data-cart-filled>
+      <ul class="cart__lines" data-cart-lines></ul>
+      <button class="cart__empty-btn text-small" type="button" data-cart-empty>Empty the cart</button>
+
+      <div class="summary">
+        <p class="text-label">order summary</p>
+        <dl class="summary__rows">
+          <div><dt>Subtotal</dt><dd class="summary__value" data-cart-subtotal></dd></div>
+          <div><dt>Taxes</dt><dd>Calculated at checkout</dd></div>
+          <div><dt>Delivery fee</dt><dd>Calculated at checkout</dd></div>
+        </dl>
+        <div class="summary__total">
+          <span>Estimated total</span>
+          <span data-cart-total></span>
+        </div>
+      </div>
+
+      <div class="cart__actions">
+        <a class="btn btn--light btn--block" href="/checkout/shipping/"><span>CHECKOUT</span></a>
+        <div class="cart__secure">
+          <p>All payments are secure</p>
+          <Icon name="payments" />
+        </div>
+      </div>
+    </div>
+
+    <div class="cart__blank" data-cart-blank>
+      <p>Your cart is currently empty</p>
+      <a class="btn btn--light btn--block" href="/collection/" data-cart-continue><span>CONTINUE SHOPPING</span></a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cart {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+  }
+
+  .cart[hidden] {
+    display: none;
+  }
+
+  .cart__backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: transparent;
+  }
+
+  /* Figma: 632px wide panel, 100px from the top and right edges, 40px padding */
+  .cart__panel {
+    position: absolute;
+    top: 6.25em;
+    right: 6.25em;
+    display: flex;
+    flex-direction: column;
+    width: 39.5em;
+    max-height: calc(100vh - 7.5em);
+    min-height: 37.5em;
+    padding: 2.5em;
+    background-color: var(--color-surface);
+    overflow-y: auto;
+  }
+
+  .cart__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .cart__close {
+    display: grid;
+    place-items: center;
+    min-width: 2.75em;
+    min-height: 2.75em;
+    margin: -0.625em -0.625em 0 0;
+  }
+
+  .cart__filled {
+    display: flex;
+    flex-direction: column;
+    margin-top: 2.75em; /* 44px */
+  }
+
+  .cart__lines {
+    display: flex;
+    flex-direction: column;
+    gap: 1.125em; /* 18px */
+  }
+
+  .cart__empty-btn {
+    align-self: flex-start;
+    margin-top: 1.125em;
+  }
+
+  .cart__empty-btn:hover {
+    color: var(--color-white);
+  }
+
+  .cart__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5em;
+    margin-top: 2.5em;
+  }
+
+  .cart__secure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.375em;
+  }
+
+  .cart__secure p {
+    font-size: 0.75em;
+    line-height: 1.333;
+    letter-spacing: -0.48px;
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+
+  .cart__blank {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2.5em;
+    padding-block: 4em;
+  }
+
+  .cart__blank p {
+    font-size: 1.5em;
+    font-weight: 600;
+    line-height: 1.333;
+    color: var(--color-white);
+    text-align: center;
+  }
+
+  .cart.is-empty .cart__filled,
+  .cart:not(.is-empty) .cart__blank {
+    display: none;
+  }
+
+  @media (max-width: 991px) {
+    .cart__panel {
+      top: 0;
+      right: 0;
+      height: 100%;
+      max-height: none;
+      width: min(39.5em, 100%);
+    }
+  }
+
+  @media (max-width: 479px) {
+    .cart__panel {
+      padding: 1.5em 1em;
+    }
+
+    .cart .title-md {
+      font-size: 2.5em;
+    }
+  }
+</style>

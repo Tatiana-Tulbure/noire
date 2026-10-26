@@ -1,0 +1,110 @@
+---
+export interface LegalBlock {
+  /** Lines rendered as paragraphs; arrays are rendered as bullet lists */
+  body: (string | string[])[];
+  title: string;
+  /** Figma uses Medium (500) for some headings and SemiBold (600) for others */
+  medium?: boolean;
+}
+
+interface Props {
+  title: string;
+  blocks: LegalBlock[];
+}
+
+const { title, blocks } = Astro.props;
+---
+
+<article class="legal container container--padded">
+  <h1 class="title-lg legal__title">{title}</h1>
+  <div class="legal__body">
+    {blocks.map((b) => (
+      <section class="legal__block">
+        <h2 class:list={["legal__h", { "legal__h--medium": b.medium }]}>{b.title}</h2>
+        <div class="legal__text">
+          {b.body.map((part) =>
+            Array.isArray(part) ? (
+              <ul>{part.map((li) => <li>{li}</li>)}</ul>
+            ) : (
+              <p>{part}</p>
+            ),
+          )}
+        </div>
+      </section>
+    ))}
+  </div>
+</article>
+
+<style>
+  /* Figma: 892px centred column, 44px under the title, 36px between blocks */
+  .legal {
+    max-width: calc(55.75em + 2 * var(--container-padding));
+    margin-top: 4.375em; /* title at y181 */
+  }
+
+  .legal__title {
+    text-align: center;
+  }
+
+  .legal__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2.25em;
+    margin-top: 2.75em;
+  }
+
+  .legal__block {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25em;
+  }
+
+  .legal__h {
+    font-family: var(--font-body);
+    font-size: 1.5em;
+    font-weight: 600;
+    line-height: 1.333;
+    color: var(--color-text);
+  }
+
+  .legal__h--medium {
+    font-weight: 500;
+    letter-spacing: -0.48px;
+  }
+
+  .legal__text {
+    font-size: 1.125em;
+    line-height: 1.333;
+    letter-spacing: -0.36px;
+    color: var(--color-text);
+  }
+
+  .legal__text ul {
+    padding-left: 1em;
+  }
+
+  .legal__text li {
+    position: relative;
+    padding-left: 0.9em;
+  }
+
+  .legal__text li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+  }
+
+  @media (max-width: 479px) {
+    .legal__title {
+      font-size: 2.75em;
+    }
+
+    .legal__h {
+      font-size: 1.25em;
+    }
+
+    .legal__text {
+      font-size: 1em;
+    }
+  }
+</style>

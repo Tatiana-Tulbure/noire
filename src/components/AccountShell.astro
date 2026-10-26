@@ -1,0 +1,164 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  title: string;
+  active: "account" | "orders" | "addresses";
+}
+
+const { title, active } = Astro.props;
+const tabs = [
+  { key: "account", label: "My account", href: "/account/" },
+  { key: "orders", label: "Order history", href: "/account/orders/" },
+  { key: "addresses", label: "Address", href: "/account/addresses/" },
+];
+---
+
+<div class="acct container container--padded">
+  <h1 class="title-xl acct__title">{title}</h1>
+  <nav class="acct__tabs" aria-label="Account">
+    <ul>
+      {tabs.map((t) => (
+        <li>
+          <a class:list={["acct__tab", { "is-active": t.key === active }]} href={t.href} aria-current={t.key === active ? "page" : undefined}>
+            {t.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+    <a class="acct__logout" href="/login/">
+      <span>LOG OUT</span>
+      <Icon name="logout" />
+    </a>
+  </nav>
+  <div class="acct__body">
+    <slot />
+  </div>
+</div>
+
+<style>
+  /* Figma: 480px tab panel on the left, content column from x666; title at the top of the content column */
+  .acct {
+    display: grid;
+    grid-template-columns: 30em 1fr;
+    grid-template-rows: auto 1fr;
+    column-gap: 8em; /* 128px */
+    row-gap: 3em;    /* 48px */
+    margin-top: 3.75em;
+  }
+
+  .acct__title {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .acct__tabs {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 5.125em; /* 82px */
+    padding: 3.125em; /* 50px */
+    background-color: var(--color-surface);
+  }
+
+  .acct__tabs ul {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+  }
+
+  .acct__tab {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--color-border);
+    color: var(--color-muted);
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .acct__tab,
+  .acct__logout span {
+    font-size: 1.25em;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.4px;
+  }
+
+  .acct__tab {
+    height: 3.2em; /* 64px at 20px */
+    padding: 0 1.6em;
+  }
+
+  .acct__tab:hover {
+    color: var(--color-white);
+  }
+
+  .acct__tab.is-active {
+    border-color: var(--color-accent);
+    color: var(--color-white);
+  }
+
+  .acct__logout {
+    display: flex;
+    align-items: center;
+    gap: 1.25em;
+    color: #ffffff;
+  }
+
+  .acct__logout:hover span {
+    text-decoration: underline;
+  }
+
+  .acct__body {
+    grid-column: 2;
+    grid-row: 2;
+    min-width: 0;
+  }
+
+  @media (max-width: 991px) {
+    .acct {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+      row-gap: 2em;
+    }
+
+    .acct__title,
+    .acct__tabs,
+    .acct__body {
+      grid-column: 1;
+      grid-row: auto;
+    }
+
+    .acct__tabs {
+      gap: 1.5em;
+      padding: 1.5em;
+    }
+
+    .acct__tabs ul {
+      flex-direction: row;
+      gap: 0.75em;
+    }
+
+    .acct__tabs li {
+      flex: 1;
+    }
+
+    .acct__tab {
+      justify-content: center;
+      padding: 0 0.5em;
+      text-align: center;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .acct .title-xl {
+      font-size: 3em;
+      letter-spacing: -0.96px;
+    }
+
+    .acct__tabs ul {
+      flex-direction: column;
+    }
+  }
+</style>

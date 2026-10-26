@@ -1,0 +1,521 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProductCard from "../../components/ProductCard.astro";
+import Icon from "../../components/Icon.astro";
+import { products, alsoLike, img, eurLong, type Product } from "../../data/products";
+
+export function getStaticPaths() {
+  return products.map((p) => ({ params: { slug: p.slug }, props: { product: p } }));
+}
+
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+const main = img(product.image);
+const isFat = product.slug === "fat-lounge-chair";
+
+// Gallery + colour swatches exist in Figma for the Fat Lounge Chair only
+const gallery = isFat ? ["fat-detail-1", "fat-detail-2", "fat-detail-3"].map(img) : [];
+const swatches = isFat
+  ? [
+      { name: "Cognac bouclé", image: img("fat-color-1") },
+      { name: "Ivory bouclé", image: img("fat-color-2") },
+      { name: "Bordeaux bouclé", image: img("fat-color-3") },
+      { name: "Rosewood bouclé", image: img("fat-color-4") },
+    ]
+  : [];
+const activeSwatch = 2;
+
+const related = alsoLike.filter((p) => p.slug !== product.slug).slice(0, 5);
+
+const info = [
+  {
+    title: "materials",
+    body: `Upholstery: ${product.materials.join(", ").toLowerCase()}. Inner structure in high-resilience moulded foam over a solid frame, hand-finished in Europe.`,
+  },
+  {
+    title: "SPECIFICATIONS",
+    body: product.dimensions ?? "Dimensions and weight are available on request from our design team.",
+  },
+  {
+    title: "PRODUCTS CARE",
+    body: "Vacuum regularly with a soft brush attachment. Blot spills immediately with a clean, dry cloth and avoid direct sunlight to preserve the colour.",
+  },
+  {
+    title: "Tests & certifications",
+    body: "Tested for durability and stability according to EN 16139. Fabrics are certified to OEKO-TEX® Standard 100.",
+  },
+  {
+    title: "Downloads",
+    body: "Product sheet, care guide and 3D files are available on request at support@noire.com.",
+  },
+];
+---
+
+<BaseLayout title={`${product.name} — NOIRÉ`} description={product.description.slice(0, 155)} image={main.src} active={product.group}>
+  <div class="pdp container container--padded">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Home/</a>
+      <a href="/collection/">Furniture/</a>
+      <span aria-current="page">{product.name.toLowerCase().replace(/^./, (c) => c.toUpperCase())}</span>
+    </nav>
+
+    <div class="pdp__main">
+      <div class="pdp__media">
+        <div class="pdp__stage">
+          <img class="pdp__img" src={main.src} width={main.width} height={main.height} alt={product.name} fetchpriority="high" data-main-img />
+        </div>
+        {gallery.length > 0 && (
+          <ul class="pdp__thumbs">
+            {gallery.map((g, i) => (
+              <li class="pdp__thumb">
+                <img src={g.src} width={g.width} height={g.height} alt={`${product.name} — detail ${i + 1}`} loading="lazy" />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div class="pdp__info">
+        <h1 class="title-lg">{product.name}</h1>
+        <p class="text-body">{product.description}</p>
+
+        <div class="pdp__price">
+          <p class="pdp__amount">{eurLong(product.price)}</p>
+          <p class="text-small">Free delivery in 2–4 weeks · 30-day returns · VAT included</p>
+        </div>
+
+        {swatches.length > 0 && (
+          <fieldset class="pdp__colors">
+            <legend class="text-label">Color: <span data-color-name>{swatches[activeSwatch].name}</span></legend>
+            <div class="pdp__swatches">
+              {swatches.map((s, i) => (
+                <label class="swatch">
+                  <input type="radio" name="color" value={s.name} checked={i === activeSwatch} data-swatch={s.image.src} />
+                  <img src={s.image.src} width={s.image.width} height={s.image.height} alt={s.name} loading="lazy" />
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        )}
+
+        <div class="pdp__qty">
+          <p class="text-label" id="qty-label">Quantity</p>
+          <div class="qty qty--lg" role="group" aria-labelledby="qty-label">
+            <button type="button" data-step="-1" aria-label="Decrease quantity" disabled><Icon name="qty-minus" current /></button>
+            <span class="qty__value" id="pdp-qty" aria-live="polite">1</span>
+            <button type="button" data-step="1" aria-label="Increase quantity"><Icon name="qty-plus" current /></button>
+          </div>
+        </div>
+
+        {product.dimensions && <p class="text-small">{product.dimensions}</p>}
+
+        <div class="pdp__buy">
+          <button class="btn btn--light pdp__add" type="button" data-add-to-cart={product.slug} data-qty-source="#pdp-qty"><span>Add to cart</span></button>
+          <button class="pdp__wish" type="button" data-wish={product.slug} aria-pressed="false" aria-label={`Add ${product.name} to wishlist`}>
+            <Icon name="heart" class="icon-off" current />
+            <Icon name="heart-filled" class="icon-on" />
+          </button>
+        </div>
+
+        <div class="pdp__acc">
+          {info.map((row, i) => (
+            <div class="acc">
+              <button class="acc__head" type="button" data-accordion aria-expanded="false" aria-controls={`acc-${i}`}>
+                <span class="text-label">{row.title}</span>
+                <Icon name="chevron-down" />
+              </button>
+              <div class="acc__body text-body" id={`acc-${i}`} hidden>{row.body}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="also" aria-labelledby="also-title">
+    <div class="container container--padded" data-carousel>
+      <h2 class="title-xl" id="also-title">You might also like</h2>
+      <div class="also__track" data-carousel-track>
+        {related.map((p) => <ProductCard product={p} />)}
+      </div>
+      <div class="indicator also__indicator" aria-hidden="true"><span data-carousel-thumb></span></div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const value = document.getElementById("pdp-qty");
+  const minus = document.querySelector<HTMLButtonElement>('[data-step="-1"]');
+  document.querySelectorAll<HTMLButtonElement>("[data-step]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (!value || !minus) return;
+      const next = Math.max(1, Math.min(20, Number(value.textContent) + Number(btn.dataset.step)));
+      value.textContent = String(next);
+      minus.disabled = next <= 1;
+    });
+  });
+
+  const mainImg = document.querySelector<HTMLImageElement>("[data-main-img]");
+  const colorName = document.querySelector("[data-color-name]");
+  document.querySelectorAll<HTMLInputElement>("[data-swatch]").forEach((input) => {
+    input.addEventListener("change", () => {
+      if (mainImg) mainImg.src = input.dataset.swatch!;
+      if (colorName) colorName.textContent = input.value;
+    });
+  });
+</script>
+
+<style>
+  .crumbs {
+    display: flex;
+    gap: 1.5625em; /* 25px */
+    margin-top: 0.1875em;
+    font-size: 0.875em;
+    line-height: 1.357;
+    letter-spacing: -0.28px;
+    color: var(--color-white);
+  }
+
+  .crumbs a:hover {
+    text-decoration: underline;
+  }
+
+  .crumbs span {
+    color: var(--color-placeholder);
+  }
+
+  .pdp__main {
+    display: grid;
+    grid-template-columns: 61.4375em 46em; /* 983px media, 736px info */
+    justify-content: space-between;
+    margin-top: 1.3125em; /* 21px */
+  }
+
+  .pdp__media {
+    display: flex;
+    flex-direction: column;
+    gap: 1.875em; /* 30px */
+  }
+
+  .pdp__stage {
+    display: grid;
+    place-items: center;
+    height: 46.875em; /* 750px */
+    padding: 2.25em 0.75em;
+    border: 1px solid var(--color-border);
+  }
+
+  .pdp__img {
+    width: 59.9375em;  /* 959px */
+    height: 41.25em;   /* 660px */
+    object-fit: contain;
+  }
+
+  .pdp__thumbs {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.9375em;
+    padding-block: 1.9375em; /* thumbs row is 397px with 335px tiles */
+  }
+
+  .pdp__thumb {
+    display: grid;
+    place-items: center;
+    width: 17.6875em;  /* 283px */
+    height: 20.9375em; /* 335px */
+    padding: 1.5em;
+    border: 1px solid var(--color-border);
+  }
+
+  .pdp__thumb img {
+    width: 14.6875em; /* 235px */
+    height: 14.6875em;
+    object-fit: cover;
+  }
+
+  .pdp__info {
+    display: flex;
+    flex-direction: column;
+    gap: 2.25em; /* 36px */
+  }
+
+  .pdp__info .title-lg {
+    margin-bottom: -0.25em; /* Figma: 20px between title and copy */
+  }
+
+  .pdp__price {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625em;
+  }
+
+  .pdp__amount {
+    font-size: 2em;
+    font-weight: 600;
+    line-height: 1.344;
+    letter-spacing: -0.64px;
+    color: #ffffff;
+  }
+
+  .pdp__colors {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875em;
+    border: none;
+  }
+
+  .pdp__colors legend {
+    float: left;
+    margin-bottom: 0.7em;
+  }
+
+  .pdp__swatches {
+    display: flex;
+    gap: 1.25em;
+    clear: both;
+  }
+
+  .swatch {
+    display: grid;
+    place-items: center;
+    width: 8.1875em;  /* 131px */
+    height: 7.375em;  /* 118px */
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    transition: border-color var(--transition-fast);
+  }
+
+  .swatch:has(input:checked) {
+    border-color: var(--color-accent);
+  }
+
+  .swatch:has(input:focus-visible) {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .swatch input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .swatch img {
+    width: 5.1875em; /* 83px */
+    height: 5.1875em;
+    object-fit: cover;
+  }
+
+  .pdp__qty {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875em;
+  }
+
+  .qty--lg {
+    gap: 0.5625em;
+    width: 11.6875em; /* 187px */
+    height: 3.4375em; /* 55px */
+  }
+
+  .pdp__buy {
+    display: flex;
+    align-items: center;
+    gap: 4em; /* 64px */
+  }
+
+  .pdp__add {
+    flex: 1;
+  }
+
+  .pdp__wish {
+    display: grid;
+    place-items: center;
+    min-width: 2.75em;
+    min-height: 2.75em;
+    margin-right: 0.75em;
+    color: var(--color-white);
+  }
+
+  .pdp__wish :global(.icon-on),
+  .pdp__wish[aria-pressed="true"] :global(.icon-off) {
+    display: none;
+  }
+
+  .pdp__wish[aria-pressed="true"] :global(.icon-on) {
+    display: block;
+    width: 1.875em;
+    height: 1.875em;
+  }
+
+  .acc {
+    border-bottom: 1px solid rgba(254, 254, 254, 0.3);
+  }
+
+  .acc__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    min-height: 3.75em; /* 60px */
+    padding-block: 1.25em;
+    text-align: left;
+  }
+
+  .acc__head[aria-expanded="true"] :global(svg) {
+    transform: rotate(180deg);
+  }
+
+  .acc__body {
+    padding-bottom: 1.25em;
+  }
+
+  .also {
+    margin-top: 12.5em; /* 200px */
+  }
+
+  .also__track {
+    display: flex;
+    gap: 1.25em;
+    margin-top: 2.375em; /* 38px */
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .also__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .also__track > :global(.card) {
+    --card-img-h: 28.1875em; /* 451px */
+    flex: 0 0 calc((100% - 2.5em) / 3);
+    height: 38.125em; /* 610px */
+    scroll-snap-align: start;
+  }
+
+  .also__indicator {
+    margin-top: 2.375em;
+  }
+
+  @media (max-width: 991px) {
+    .pdp__main {
+      grid-template-columns: 1fr;
+      row-gap: 3em;
+    }
+
+    .pdp__stage {
+      height: auto;
+      aspect-ratio: 983 / 750;
+    }
+
+    .pdp__img {
+      width: 100%;
+      height: 100%;
+    }
+
+    .pdp__thumbs {
+      gap: 0.75em;
+      padding-block: 0;
+    }
+
+    .pdp__thumb {
+      flex: 1;
+      width: auto;
+      height: auto;
+      aspect-ratio: 1;
+      padding: 0.75em;
+    }
+
+    .pdp__thumb img {
+      width: 100%;
+      height: 100%;
+    }
+
+    .also {
+      margin-top: 6em;
+    }
+
+    .also__track {
+      margin-inline: calc(var(--container-padding) * -1);
+      padding-inline: var(--container-padding);
+      scroll-padding-inline: var(--container-padding);
+      gap: 1.125em;
+    }
+
+    .also__track > :global(.card) {
+      --card-img-h: 18em;
+      flex-basis: min(22em, 70%);
+      height: auto;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .crumbs {
+      margin-top: 1em;
+      font-size: 1em;
+    }
+
+    .pdp__info {
+      gap: 1.5em;
+    }
+
+    .pdp__info .title-lg {
+      font-size: 2.5em;
+      letter-spacing: -0.8px;
+    }
+
+    .pdp__info > .text-body {
+      font-size: 1em;
+    }
+
+    .pdp__amount {
+      font-size: 1.125em;
+    }
+
+    .pdp__swatches {
+      gap: 0.6875em;
+    }
+
+    .swatch {
+      flex: 1;
+      width: auto;
+      height: 4.0625em;
+    }
+
+    .swatch img {
+      width: 2.9375em;
+      height: 2.9375em;
+    }
+
+    .qty--lg {
+      width: 7.25em;
+    }
+
+    .pdp__buy {
+      gap: 1.5em;
+    }
+
+    .pdp__wish {
+      margin-right: 0.5em;
+    }
+
+    .acc__head .text-label {
+      font-size: 1em;
+    }
+
+    .also .title-xl {
+      font-size: 2.75em;
+      font-weight: 500;
+      letter-spacing: -0.88px;
+    }
+
+    .also__track > :global(.card) {
+      --card-img-h: 12.75em;
+      flex-basis: 14.4375em;
+    }
+  }
+</style>

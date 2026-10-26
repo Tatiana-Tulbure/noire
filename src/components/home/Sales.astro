@@ -1,0 +1,119 @@
+---
+import ProductCard from "../ProductCard.astro";
+import { sales } from "../../data/products";
+---
+
+<section class="sales" id="sales" aria-labelledby="sales-title">
+  <div class="sales__inner container container--padded">
+    <div class="sales__intro">
+      <h2 class="title-xl" id="sales-title">SALES</h2>
+      <p class="text-body">
+        Discover a world where simplicity, and functionality come together to create timeless pieces that transform every interior into a refined living experience.Create a home that reflects your style.
+      </p>
+      <a class="btn btn--outline" href="/collection/"><span>Discover the collection</span></a>
+    </div>
+
+    <div class="sales__cards" data-carousel>
+      <div class="sales__track" data-carousel-track>
+        {sales.map((p) => <ProductCard product={p} />)}
+      </div>
+      <div class="indicator" aria-hidden="true"><span data-carousel-thumb></span></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sales {
+    margin-top: 12.5em; /* 200px */
+    overflow: hidden;
+  }
+
+  .sales__inner {
+    display: grid;
+    grid-template-columns: 27.1875em 1fr; /* 435px text column */
+    column-gap: 10.75em; /* 172px */
+    align-items: start;
+  }
+
+  .sales__intro {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75em; /* 28px */
+  }
+
+  .sales__intro .btn {
+    margin-top: 0;
+  }
+
+  .sales__cards {
+    display: flex;
+    flex-direction: column;
+    gap: 2.25em; /* 36px */
+    min-width: 0;
+  }
+
+  /* Cards bleed past the right edge like the Figma frame */
+  .sales__track {
+    display: flex;
+    gap: 1.3125em; /* 21px */
+    margin-right: calc(var(--container-padding) * -1);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .sales__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sales__track > :global(.card) {
+    --card-img-h: 28.1875em; /* 451px */
+    flex: 0 0 27.1875em; /* 435px */
+    height: 33.5625em;   /* 537px */
+    scroll-snap-align: start;
+  }
+
+  @media (max-width: 991px) {
+    .sales {
+      margin-top: 6em;
+    }
+
+    .sales__inner {
+      grid-template-columns: 1fr;
+      row-gap: 2em;
+    }
+
+    .sales__track {
+      margin-inline: calc(var(--container-padding) * -1);
+      padding-inline: var(--container-padding);
+      scroll-padding-inline: var(--container-padding);
+    }
+
+    .sales__track > :global(.card) {
+      --card-img-h: 18em;
+      flex-basis: min(22em, 70%);
+      height: auto;
+    }
+
+    .sales__cards {
+      gap: 1.5em;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .sales .title-xl {
+      font-size: 2.75em;
+      font-weight: 500;
+      letter-spacing: -0.88px;
+    }
+
+    .sales__intro .text-body {
+      display: none;
+    }
+
+    .sales__track > :global(.card) {
+      --card-img-h: 12.75em;
+      flex-basis: 14.4375em;
+    }
+  }
+</style>

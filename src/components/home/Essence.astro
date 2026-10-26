@@ -1,0 +1,191 @@
+---
+import { img } from "../../data/products";
+
+const white = img("essence-white-chair");
+const pink = img("essence-pink-chair");
+---
+
+<!-- Figma "sp_section": layered type and two chair cut-outs on a navy → violet gradient -->
+<section class="essence" aria-labelledby="essence-title">
+  <div class="essence__stage">
+    <span class="essence__word essence__word--design" aria-hidden="true">DESIgn</span>
+    <img class="essence__chair essence__chair--white" src={white.src} width={white.width} height={white.height} alt="" role="presentation" loading="lazy" />
+    <img class="essence__chair essence__chair--pink" src={pink.src} width={pink.width} height={pink.height} alt="Magenta velvet swivel armchair" loading="lazy" />
+    <h2 class="sr-only" id="essence-title">NOIRÉ Design Essence</h2>
+    <span class="essence__word essence__word--noire" aria-hidden="true">NOIRÉ</span>
+    <span class="essence__word essence__word--essence" aria-hidden="true">ESSENCE</span>
+    <p class="text-body essence__text">
+      Discover a world where simplicity, and functionality come together to create timeless pieces that transform every interior a refined living experience.
+    </p>
+    <a class="btn btn--light essence__cta" href="/collection/"><span>Discover the collection</span></a>
+  </div>
+</section>
+
+<style>
+  .essence {
+    margin-top: 15.875em; /* 254px */
+    background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-gradient-end) 100%);
+    overflow: hidden;
+  }
+
+  /* Stage = Figma frame 1908×1641, children placed in % */
+  .essence__stage {
+    position: relative;
+    width: 119.25em;
+    max-width: 100%;
+    aspect-ratio: 1908 / 1641;
+    margin-inline: auto;
+  }
+
+  .essence__word {
+    position: absolute;
+    font-family: var(--font-heading);
+    font-size: 18.75em; /* 300px */
+    font-weight: 500;
+    line-height: 0.8;  /* 240 / 300 */
+    letter-spacing: -0.02em; /* -6px at 300px */
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--color-white);
+  }
+
+  .essence__word--design {
+    left: 25.629%;
+    top: 16.027%;
+  }
+
+  .essence__word--noire {
+    left: 2.83%;
+    top: 2.072%;
+    width: 48.113%;
+    text-align: center;
+  }
+
+  .essence__word--essence {
+    left: 2.83%;
+    top: 28.032%;
+    line-height: 1;
+    color: var(--color-ivory);
+  }
+
+  .essence__chair {
+    position: absolute;
+    max-width: none;
+    object-fit: fill;
+  }
+
+  .essence__chair--white {
+    left: 39.151%;
+    top: -17.246%;
+    width: 93.553%;
+    height: 108.775%;
+  }
+
+  .essence__chair--pink {
+    left: -0.891%;
+    top: -1.767%;
+    width: 85.954%;
+    height: 97.197%;
+  }
+
+  .essence__text {
+    position: absolute;
+    left: 2.83%;
+    top: 24.497%;
+    width: 22.799%;
+  }
+
+  .essence__cta {
+    position: absolute;
+    left: 2.83%;
+    top: 48.081%;
+    width: 62.474%;
+  }
+
+  @media (max-width: 991px) {
+    .essence {
+      margin-top: 6em;
+    }
+
+    .essence__stage {
+      width: 100%;
+      font-size: calc(100vw / 119.25);
+    }
+
+    .essence__text,
+    .essence__cta {
+      font-size: var(--size-font);
+    }
+
+    .essence__text {
+      left: var(--container-padding);
+      top: 3%;
+      width: 40%;
+      font-size: calc(var(--size-font) * 0.875);
+      line-height: 1.357;
+    }
+
+    .essence__cta {
+      left: var(--container-padding);
+      right: var(--container-padding);
+      top: auto;
+      bottom: 8%;
+      width: auto;
+    }
+
+    .essence__word--noire {
+      top: 14%;
+    }
+
+    .essence__word--design {
+      top: 28%;
+    }
+
+    .essence__word--essence {
+      top: 42%;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .essence__stage {
+      aspect-ratio: 360 / 820;
+      font-size: calc(100vw / 75);
+    }
+
+    .essence__word--design {
+      left: 18%;
+      top: 32%;
+      color: #1e1e1e;
+    }
+
+    .essence__word--noire {
+      left: var(--container-padding);
+      top: 28%;
+      width: auto;
+    }
+
+    .essence__word--essence {
+      top: 39%;
+    }
+
+    .essence__text {
+      width: 60%;
+    }
+
+    .essence__chair--white {
+      left: 55%;
+      top: 15%;
+      width: 90%;
+      height: auto;
+      aspect-ratio: 1;
+    }
+
+    .essence__chair--pink {
+      left: 8%;
+      top: 34%;
+      width: 80%;
+      height: auto;
+      aspect-ratio: 1640 / 1595;
+    }
+  }
+</style>

@@ -1,0 +1,83 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  label: string;
+  name: string;
+  type?: string;
+  placeholder?: string;
+  autocomplete?: string;
+  required?: boolean;
+  /** Show the eye toggle on password fields */
+  reveal?: boolean;
+  options?: string[];
+  inputmode?: "numeric" | "tel" | "email" | "text";
+  pattern?: string;
+  maxlength?: number;
+  class?: string;
+}
+
+const { label, name, type = "text", placeholder, autocomplete, required = false, reveal = false, options, inputmode, pattern, maxlength, class: className } = Astro.props;
+const id = `f-${name}`;
+---
+
+<div class:list={["field", className]}>
+  <label class="field__label" for={id}>{label}</label>
+  <div class="field__control">
+    {options ? (
+      <>
+        <select class="input field__select" id={id} name={name} required={required} autocomplete={autocomplete} aria-describedby={`${id}-error`}>
+          <option value="" selected disabled hidden></option>
+          {options.map((o) => <option value={o}>{o}</option>)}
+        </select>
+        <Icon name="order-chevron" class="field__chev" />
+      </>
+    ) : (
+      <input
+        class="input"
+        id={id}
+        name={name}
+        type={type}
+        placeholder={placeholder}
+        autocomplete={autocomplete}
+        required={required}
+        inputmode={inputmode}
+        pattern={pattern}
+        maxlength={maxlength}
+        aria-describedby={`${id}-error`}
+      />
+    )}
+    {reveal && (
+      <button class="field__reveal" type="button" data-reveal={id} aria-label="Show password" aria-pressed="false">
+        <Icon name="eye" />
+      </button>
+    )}
+  </div>
+  <p class="field__error" id={`${id}-error`} hidden>This field must be completed!</p>
+</div>
+
+<style>
+  .field__select {
+    padding-right: 3em;
+    cursor: pointer;
+  }
+
+  .field__select option {
+    background-color: var(--color-surface);
+  }
+
+  .field__control :global(.field__chev) {
+    position: absolute;
+    right: 1.25em;
+    pointer-events: none;
+  }
+
+  .field__reveal {
+    position: absolute;
+    right: 0.75em;
+    display: grid;
+    place-items: center;
+    min-width: 2.75em;
+    min-height: 2.75em;
+  }
+</style>

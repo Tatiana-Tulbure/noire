@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import LegalPage, { type LegalBlock } from "../components/LegalPage.astro";
+
+const blocks: LegalBlock[] = [
+  { title: "1. Order Processing", medium: true, body: ["All orders are processed within 1–3 business days after payment has been confirmed. Orders placed on weekends or public holidays will be processed on the next business day."] },
+  { title: "Shipping", body: ["Delivery times depend on your location and product availability.", ["Standard Delivery: 3–7 business days", "Large Furniture: 7–14 business days", "Made-to-Order Items: Estimated delivery time will be displayed on the product page."], "Once your order has been shipped, you will receive a confirmation email with tracking information."] },
+  { title: "Shipping Costs", medium: true, body: ["Shipping costs are calculated automatically during checkout based on your delivery address and the size of your order.", "Free shipping may be available during selected promotions or for qualifying orders."] },
+  { title: "Delivery Information", body: ["Please ensure that your shipping address and contact details are accurate before completing your purchase.", "If your order arrives damaged, incomplete, or incorrect, please contact us within 48 hours of delivery and include photographs of both the product and its packaging."] },
+  { title: "Returns", body: ["If you are not completely satisfied with your purchase, you may return eligible items within 30 days of receiving your order.", "To qualify for a return, items must:", ["Be unused and in their original condition.", "Include all original packaging and accessories.", "Be accompanied by proof of purchase."]] },
+  { title: "Non-Returnable Items", body: ["The following items cannot be returned unless they are damaged or defective:", ["Made-to-order furniture", "Personalized products", "Clearance items", "Gift cards"]] },
+  { title: "7. Shipping & Delivery", body: ["Delivery times are estimates and may vary depending on product availability, destination, and logistics.", "NOIRÉ is not responsible for delays caused by:", ["Shipping carriers", "Customs procedures", "Weather conditions", "Force majeure events"], "Risk transfers to the customer upon successful delivery."] },
+  { title: "Refunds", body: ["Once your return has been received and inspected, we will notify you of the approval status.", "Approved refunds will be issued to your original payment method within 5–10 business days.", "Shipping costs are non-refundable unless the return is due to our error."] },
+  { title: "Exchanges", body: ["We currently offer exchanges only for products that arrive damaged or defective.", "For all other cases, we recommend returning the original item and placing a new order."] },
+  { title: "Need Help?", body: ["If you have any questions regarding your order, shipping, returns, or refunds, our customer support team is here to help.", "Email: support@noire.com"] },
+];
+---
+
+<BaseLayout title="Delivery & Returns — NOIRÉ" description="Delivery times, shipping costs, returns and refunds at NOIRÉ.">
+  <LegalPage title="Delivery & Returns" blocks={blocks} />
+</BaseLayout>

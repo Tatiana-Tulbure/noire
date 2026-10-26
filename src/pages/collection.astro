@@ -1,0 +1,557 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ProductCard from "../components/ProductCard.astro";
+import Icon from "../components/Icon.astro";
+import { collectionOrder, img } from "../data/products";
+
+const hero = img("collection-hero");
+
+const filters = [
+  { key: "category", title: "CATEGORY", options: ["Lounge chairs", "Armchairs", "Dining tables", "Lighting", "Sofas", "Accessories"] },
+  { key: "room", title: "room", options: ["Living room", "Dining room", "Bedroom", "Home office", "Outdoor"] },
+  { key: "color", title: "Color", options: ["Ivory", "Beige", "Pink", "Olive", "White"] },
+  { key: "material", title: "Material", options: ["Velvet", "Cotton", "Walnut", "Marble", "Metal"] },
+];
+const PAGE = 8;
+---
+
+<BaseLayout
+  title="All products — NOIRÉ"
+  description="Discover the NOIRÉ collection: lounge chairs, armchairs, sofas, tables and accessories. Filter by category, room, colour and material."
+  active="seating"
+>
+  <section class="col-hero" aria-labelledby="col-title">
+    <div class="col-hero__inner container container--padded">
+      <img class="col-hero__img" src={hero.src} width={hero.width} height={hero.height} alt="Plum velvet armchair with gold legs" fetchpriority="high" />
+      <div class="col-hero__text">
+        <h1 class="col-hero__title" id="col-title">Discover Our Collection</h1>
+        <form class="col-search" role="search" data-search-form>
+          <label class="sr-only" for="search">Search products</label>
+          <input id="search" type="search" name="q" placeholder="Search products" autocomplete="off" />
+          <button type="submit" aria-label="Search"><Icon name="search-input" /></button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="shop" aria-label="Products">
+    <div class="shop__inner container container--padded">
+      <aside class="filters" aria-label="Filters">
+        <button class="filters__toggle" type="button" data-accordion aria-expanded="false" aria-controls="filters-body">
+          <span class="text-label">Filters</span>
+          <Icon name="chevron-down" current />
+        </button>
+        <form class="filters__body" id="filters-body" data-filters>
+          <fieldset class="filters__group filters__group--price">
+            <legend class="filters__title filters__title--price">Price</legend>
+            <div class="range">
+              <div class="range__track"><span class="range__fill" data-range-fill></span></div>
+              <label class="sr-only" for="price-min">Minimum price</label>
+              <input id="price-min" type="range" min="0" max="6000" step="50" value="0" data-price-min />
+              <label class="sr-only" for="price-max">Maximum price</label>
+              <input id="price-max" type="range" min="0" max="6000" step="50" value="6000" data-price-max />
+            </div>
+            <div class="range__labels">
+              <span data-price-min-label>0€</span>
+              <span data-price-max-label>6000€</span>
+            </div>
+          </fieldset>
+
+          {filters.map((f) => (
+            <fieldset class="filters__group">
+              <legend class="sr-only">{f.title}</legend>
+              <button class="filters__head" type="button" data-accordion aria-expanded="true" aria-controls={`filter-${f.key}`}>
+                <span class="filters__title">{f.title}</span>
+                <Icon name="chevron-down" current class="filters__chev" />
+              </button>
+              <div class="filters__options" id={`filter-${f.key}`}>
+                {f.options.map((o) => (
+                  <label class="check">
+                    <input type="checkbox" name={f.key} value={o} />
+                    <span class="check__box">
+                      <Icon name="checkbox" class="icon-off" />
+                      <Icon name="checkbox-checked" class="icon-on" />
+                    </span>
+                    <span class="check__text">{o}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          ))}
+
+          <button class="filters__clear" type="reset">Clear all filter</button>
+        </form>
+      </aside>
+
+      <div class="results">
+        <p class="sr-only" role="status" data-results-status></p>
+        <ul class="results__grid" data-results>
+          {collectionOrder.map((p, i) => (
+            <li
+              data-product
+              data-name={p.name.toLowerCase()}
+              data-price={p.price}
+              data-category={p.category}
+              data-group={p.group}
+              data-room={p.rooms.join("|")}
+              data-color={p.colors.join("|")}
+              data-material={p.materials.join("|")}
+            >
+              <ProductCard product={p} lazy={i > 1} />
+            </li>
+          ))}
+        </ul>
+        <div class="results__empty" data-results-empty hidden>
+          <p class="text-body">No products match your filters.</p>
+          <button class="btn btn--outline" type="button" data-clear-filters><span>Clear all filter</span></button>
+        </div>
+        <button class="btn btn--light results__more" type="button" data-more><span>More results</span></button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script define:vars={{ PAGE }}>
+  const form = document.querySelector("[data-filters]");
+  const items = [...document.querySelectorAll("[data-product]")];
+  const more = document.querySelector("[data-more]");
+  const empty = document.querySelector("[data-results-empty]");
+  const status = document.querySelector("[data-results-status]");
+  const search = document.getElementById("search");
+  const minEl = form.querySelector("[data-price-min]");
+  const maxEl = form.querySelector("[data-price-max]");
+  const fill = form.querySelector("[data-range-fill]");
+  let limit = PAGE;
+
+  const GROUPS = {
+    sofas: ["Sofas"],
+    tables: ["Dining tables"],
+    seating: ["Lounge chairs", "Armchairs"],
+    accessories: ["Accessories", "Lighting"],
+  };
+
+  // Pre-select categories from ?group= (main navigation) and the search box from ?q=
+  const params = new URLSearchParams(location.search);
+  (GROUPS[params.get("group")] || []).forEach((c) => {
+    const box = form.querySelector(`input[name="category"][value="${c}"]`);
+    if (box) box.checked = true;
+  });
+  if (params.get("q")) search.value = params.get("q");
+
+  function selected(name) {
+    return [...form.querySelectorAll(`input[name="${name}"]:checked`)].map((i) => i.value);
+  }
+
+  function apply() {
+    let lo = Number(minEl.value);
+    let hi = Number(maxEl.value);
+    if (lo > hi) [lo, hi] = [hi, lo];
+    form.querySelector("[data-price-min-label]").textContent = `${lo}€`;
+    form.querySelector("[data-price-max-label]").textContent = `${hi}€`;
+    fill.style.left = `${(lo / 6000) * 100}%`;
+    fill.style.right = `${100 - (hi / 6000) * 100}%`;
+
+    const q = search.value.trim().toLowerCase();
+    const cats = selected("category");
+    const rooms = selected("room");
+    const colors = selected("color");
+    const materials = selected("material");
+    const hit = (list, attr) => list.length === 0 || attr.split("|").some((v) => list.includes(v));
+
+    const matches = items.filter((li) => {
+      const d = li.dataset;
+      const price = Number(d.price);
+      return (
+        (!q || d.name.includes(q)) &&
+        price >= lo && price <= hi &&
+        hit(cats, d.category) && hit(rooms, d.room) && hit(colors, d.color) && hit(materials, d.material)
+      );
+    });
+
+    items.forEach((li) => (li.hidden = true));
+    matches.slice(0, limit).forEach((li) => (li.hidden = false));
+    more.hidden = matches.length <= limit;
+    empty.hidden = matches.length > 0;
+    status.textContent = `${matches.length} products`;
+  }
+
+  form.addEventListener("input", () => {
+    limit = PAGE;
+    apply();
+  });
+  form.addEventListener("reset", () => setTimeout(() => {
+    search.value = "";
+    limit = PAGE;
+    apply();
+  }));
+  document.querySelector("[data-clear-filters]").addEventListener("click", () => form.reset());
+  search.addEventListener("input", () => {
+    limit = PAGE;
+    apply();
+  });
+  document.querySelector("[data-search-form]").addEventListener("submit", (e) => {
+    e.preventDefault();
+    apply();
+    document.querySelector(".shop").scrollIntoView();
+  });
+  more.addEventListener("click", () => {
+    limit += PAGE;
+    apply();
+  });
+  if (location.hash === "#search") search.focus();
+  apply();
+</script>
+
+<style>
+  .col-hero__inner {
+    display: grid;
+    grid-template-columns: 36.625em 1fr; /* 586px image */
+    column-gap: 1.5em;
+    margin-top: 0.5em;
+  }
+
+  .col-hero__img {
+    width: 100%;
+    height: 38.3125em; /* 613px */
+    object-fit: cover;
+    margin-left: -0.1875em;
+  }
+
+  .col-hero__text {
+    display: flex;
+    flex-direction: column;
+    padding-top: 13.75em; /* title at 220px from the image top */
+  }
+
+  .col-hero__title {
+    font-size: 8.75em; /* 140px */
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -2.8px;
+    text-transform: uppercase;
+    color: var(--color-white);
+  }
+
+  /* Figma "input": 586×54, 1px #40444b border */
+  .col-search {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 36.625em;
+    height: 3.375em;
+    margin-top: 3.6875em; /* 59px */
+    padding: 0.625em 0.625em 0.625em 1.5em;
+    border: 1px solid var(--color-border-input);
+  }
+
+  .col-search:focus-within {
+    border-color: var(--color-white);
+  }
+
+  .col-search input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 0.75em;
+    color: var(--color-white);
+  }
+
+  .col-search input::placeholder {
+    color: var(--color-text);
+  }
+
+  .col-search input::-webkit-search-cancel-button {
+    filter: invert(1);
+  }
+
+  .col-search button {
+    display: grid;
+    place-items: center;
+  }
+
+  .shop__inner {
+    display: grid;
+    grid-template-columns: 32.1875em 1fr; /* 515px filter panel */
+    column-gap: 5.75em; /* 92px */
+    align-items: start;
+    margin-top: 9.25em; /* 148px */
+  }
+
+  /* Filter panel — 40px padding, 28px between groups */
+  .filters {
+    border: 1px solid rgba(254, 254, 254, 0.3);
+  }
+
+  .filters__toggle {
+    display: none;
+  }
+
+  .filters__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75em;
+    padding: 2.5em;
+  }
+
+  .filters__group {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    border: none;
+    min-width: 0;
+  }
+
+  .filters__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    color: var(--color-white);
+  }
+
+  .filters__head[aria-expanded="true"] :global(.filters__chev) {
+    transform: rotate(180deg);
+  }
+
+  .filters__head :global(.filters__chev) {
+    color: var(--color-white);
+  }
+
+  .filters__head :global(.filters__chev path) {
+    stroke-opacity: 1;
+  }
+
+  .filters__title {
+    font-size: 1.25em;
+    line-height: 1.35;
+    letter-spacing: -0.4px;
+    text-transform: uppercase;
+    color: var(--color-white);
+  }
+
+  .filters__title--price {
+    float: left;
+    margin-bottom: 1em;
+    color: var(--color-text);
+  }
+
+  .filters__options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+  }
+
+  .filters__clear {
+    align-self: flex-start;
+    padding: 0.6667em; /* 12px at 18px */
+    margin-left: -0.6667em;
+    font-size: 1.125em;
+    line-height: 1.333;
+    letter-spacing: -0.36px;
+    color: var(--color-text);
+  }
+
+  .filters__clear:hover {
+    color: var(--color-white);
+  }
+
+  /* Dual price range — two knobs on a 1px line */
+  .range {
+    position: relative;
+    height: 0.625em;
+    clear: both;
+  }
+
+  .range__track {
+    position: absolute;
+    top: 50%;
+    left: 0.3125em;
+    right: 0.3125em;
+    height: 1px;
+    background-color: rgba(178, 188, 211, 0.3);
+  }
+
+  .range__fill {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--color-text);
+  }
+
+  .range input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background: none;
+    pointer-events: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .range input::-webkit-slider-thumb {
+    width: 0.625em;
+    height: 0.625em;
+    border-radius: 50%;
+    background-color: var(--color-text);
+    pointer-events: auto;
+    cursor: pointer;
+    -webkit-appearance: none;
+  }
+
+  .range input::-moz-range-thumb {
+    width: 0.625em;
+    height: 0.625em;
+    border: none;
+    border-radius: 50%;
+    background-color: var(--color-text);
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .range input::-moz-range-track {
+    background: none;
+  }
+
+  .range__labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.25em;
+    font-size: 1.125em;
+    line-height: 1.333;
+    letter-spacing: -0.36px;
+  }
+
+  .results {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5em; /* 40px */
+  }
+
+  .results__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 1.3125em; /* 21px */
+    row-gap: 1.875em;     /* 30px */
+  }
+
+  .results__grid :global(.card) {
+    height: 33.5625em; /* 537px */
+  }
+
+  .results__more {
+    width: calc(50% - 0.65625em);
+  }
+
+  .results__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5em;
+  }
+
+  @media (max-width: 991px) {
+    .col-hero__inner {
+      grid-template-columns: 1fr;
+      row-gap: 2em;
+    }
+
+    .col-hero__img {
+      width: 60%;
+      height: auto;
+      aspect-ratio: 1;
+      margin: 0 auto;
+    }
+
+    .col-hero__text {
+      padding-top: 0;
+    }
+
+    .col-hero__title {
+      font-size: 5em;
+    }
+
+    .col-search {
+      width: 100%;
+    }
+
+    .col-search input {
+      font-size: 1em;
+    }
+
+    .shop__inner {
+      grid-template-columns: 1fr;
+      row-gap: 2em;
+      margin-top: 4em;
+    }
+
+    .filters__toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      min-height: 3.5em;
+      padding: 0 1.5em;
+      color: var(--color-white);
+    }
+
+    .filters__toggle[aria-expanded="true"] :global(svg) {
+      transform: rotate(180deg);
+    }
+
+    .filters__body {
+      padding-top: 0.5em;
+    }
+
+    .filters__toggle[aria-expanded="false"] + .filters__body {
+      display: none;
+    }
+
+    .results__grid :global(.card) {
+      height: auto;
+    }
+
+    .results__more {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .results__grid {
+      column-gap: 0.75em;
+      row-gap: 0.75em;
+    }
+
+    .col-hero__title {
+      font-size: 3.5em;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .col-hero__title {
+      font-size: 2.75em;
+      letter-spacing: -0.88px;
+    }
+
+    .results__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .results__grid :global(.card) {
+      --card-img-h: 16em;
+    }
+
+    .filters__body {
+      padding: 0.5em 1.5em 1.5em;
+    }
+
+    .check {
+      min-height: 2.75em;
+    }
+  }
+</style>

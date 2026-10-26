@@ -1,0 +1,191 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import AccountShell from "../../components/AccountShell.astro";
+import Field from "../../components/Field.astro";
+import Icon from "../../components/Icon.astro";
+---
+
+<BaseLayout title="My addresses — NOIRÉ" description="Manage your NOIRÉ delivery addresses.">
+  <AccountShell title="My Addresses" active="addresses">
+    <ul class="addr" data-addr-list>
+      <li class="addr__card is-default" data-addr>
+        <div class="addr__top">
+          <p class="addr__text" data-addr-text>8502 Preston Rd. Inglewood, Maine 98380</p>
+          <span class="addr__badge">Default</span>
+        </div>
+        <div class="addr__actions">
+          <button type="button" data-addr-edit>Edit</button>
+          <button type="button" data-addr-remove>Remove</button>
+        </div>
+      </li>
+      <li class="addr__card" data-addr>
+        <div class="addr__top">
+          <p class="addr__text" data-addr-text>8502 Preston Rd. Inglewood, Maine 98380</p>
+        </div>
+        <div class="addr__actions">
+          <button type="button" data-addr-edit>Edit</button>
+          <button type="button" data-addr-remove>Remove</button>
+        </div>
+      </li>
+      <li class="addr__add-wrap">
+        <button class="addr__add" type="button" data-addr-new>
+          <Icon name="plus" />
+          <span>ADD NEW ADDRESS</span>
+        </button>
+      </li>
+    </ul>
+
+    <form class="addr__form" data-addr-form data-demo-form hidden>
+      <Field label="Address" name="address" placeholder="Street, city, postal code" autocomplete="street-address" required />
+      <div class="addr__form-btns">
+        <button class="btn btn--ghost" type="button" data-addr-cancel><span>CANCEL</span></button>
+        <button class="btn btn--light" type="submit"><span>SAVE</span></button>
+      </div>
+    </form>
+  </AccountShell>
+</BaseLayout>
+
+<script>
+  import "../../scripts/forms.ts";
+
+  const list = document.querySelector<HTMLElement>("[data-addr-list]")!;
+  const form = document.querySelector<HTMLFormElement>("[data-addr-form]")!;
+  const input = form.querySelector<HTMLInputElement>("input")!;
+  let editing: HTMLElement | null = null;
+
+  function openForm(card: HTMLElement | null) {
+    editing = card;
+    input.value = card?.querySelector("[data-addr-text]")?.textContent ?? "";
+    form.hidden = false;
+    input.focus();
+  }
+
+  list.addEventListener("click", (e) => {
+    const t = e.target as HTMLElement;
+    const card = t.closest<HTMLElement>("[data-addr]");
+    if (t.closest("[data-addr-new]")) openForm(null);
+    else if (card && t.closest("[data-addr-edit]")) openForm(card);
+    else if (card && t.closest("[data-addr-remove]")) card.remove();
+  });
+
+  form.querySelector("[data-addr-cancel]")!.addEventListener("click", () => (form.hidden = true));
+  form.addEventListener("demo:valid", () => {
+    if (editing) {
+      editing.querySelector("[data-addr-text]")!.textContent = input.value;
+    } else {
+      const tpl = list.querySelector<HTMLElement>("[data-addr]:not(.is-default)") ?? list.querySelector<HTMLElement>("[data-addr]");
+      if (tpl) {
+        const card = tpl.cloneNode(true) as HTMLElement;
+        card.classList.remove("is-default");
+        card.querySelector(".addr__badge")?.remove();
+        card.querySelector("[data-addr-text]")!.textContent = input.value;
+        list.insertBefore(card, list.querySelector(".addr__add-wrap"));
+      }
+    }
+    form.hidden = true;
+  });
+</script>
+
+<style>
+  .addr {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2em 1.25em;
+  }
+
+  .addr__card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75em;
+    padding: 2em;
+    border: 1px solid var(--color-border);
+  }
+
+  .addr__card.is-default {
+    background-color: var(--color-surface);
+    border-color: var(--color-accent);
+  }
+
+  .addr__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1em;
+  }
+
+  .addr__text {
+    font-size: 1.125em;
+    line-height: 1.333;
+    letter-spacing: -0.36px;
+  }
+
+  .addr__badge {
+    flex-shrink: 0;
+    padding: 0.5em 1.3333em;
+    background-color: var(--color-white);
+    color: var(--color-bg);
+    font-size: 0.75em;
+    font-weight: 500;
+    line-height: 1.333;
+    letter-spacing: -0.24px;
+  }
+
+  .addr__actions {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .addr__actions button {
+    font-size: 1.125em;
+    line-height: 1.333;
+    letter-spacing: -0.36px;
+    color: var(--color-muted);
+  }
+
+  .addr__actions button:hover {
+    color: var(--color-white);
+  }
+
+  .addr__add {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5em;
+    width: 100%;
+    min-height: 4.5em;
+    padding: 1.5em 2em;
+    border: 1px solid rgba(254, 254, 254, 0.3);
+    color: #ffffff;
+  }
+
+  .addr__add:hover {
+    border-color: var(--color-white);
+  }
+
+  .addr__add span {
+    font-size: 1.25em;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.4px;
+  }
+
+  .addr__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+    max-width: 36.75em;
+    margin-top: 2.5em;
+  }
+
+  .addr__form-btns {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 1.25em;
+  }
+
+  @media (max-width: 767px) {
+    .addr {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

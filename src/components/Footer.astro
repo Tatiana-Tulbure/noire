@@ -1,0 +1,344 @@
+---
+import Icon from "./Icon.astro";
+
+const columns = [
+  {
+    title: "CONTACT",
+    links: [] as { label: string; href: string }[],
+  },
+  {
+    title: "SUPPORT",
+    links: [
+      { label: "Help", href: "mailto:support@noire.com?subject=Help" },
+      { label: "FAQ", href: "/delivery-returns/" },
+      { label: "Contact us", href: "mailto:support@noire.com" },
+      { label: "Consumer protection", href: "/terms/" },
+    ],
+  },
+  {
+    title: "USEFUL LINKS",
+    links: [
+      { label: "Catalog", href: "/collection/" },
+      { label: "New in", href: "/#new-arrivals" },
+      { label: "Bestsellers", href: "/collection/" },
+      { label: "Offers", href: "/#sales" },
+    ],
+  },
+  {
+    title: "LEGAL",
+    links: [
+      { label: "Privacy policy", href: "/terms/" },
+      { label: "Terms & conditions", href: "/terms/" },
+      { label: "Cookies", href: "/terms/" },
+      { label: "Products conformity", href: "/delivery-returns/" },
+    ],
+  },
+];
+
+const socials = [
+  { name: "facebook", label: "Facebook", href: "https://www.facebook.com/" },
+  { name: "twitter", label: "Twitter", href: "https://twitter.com/" },
+  { name: "youtube", label: "YouTube", href: "https://www.youtube.com/" },
+  { name: "instagram", label: "Instagram", href: "https://www.instagram.com/" },
+];
+---
+
+<footer class="footer" id="contact">
+  <div class="footer__inner container container--padded">
+    <div class="footer__wordmark">
+      <Icon name="logo-wordmark" label="NOIRÉ" />
+    </div>
+
+    <div class="footer__info">
+      <form class="footer__newsletter" data-newsletter>
+        <div class="footer__newsletter-text">
+          <p class="footer__heading">Stay inspired with NOIRÉ Design</p>
+          <p class="footer__lead">
+            Join our newsletter and be the first to discover new collections, exclusive offers, and design inspiration. Create a home that reflects your style.
+          </p>
+        </div>
+        <div class="footer__subscribe">
+          <label class="sr-only" for="newsletter-email">Email</label>
+          <input id="newsletter-email" type="email" name="email" placeholder="Email" required autocomplete="email" />
+          <button type="submit"><span>Subscribe</span></button>
+        </div>
+        <p class="footer__thanks" role="status" hidden>Thank you — you're on the list.</p>
+      </form>
+
+      <div class="footer__columns">
+        {columns.map((col) => (
+          <div class="footer__col">
+            <p class="footer__heading">{col.title}</p>
+            {col.title === "CONTACT" ? (
+              <address class="footer__address">
+                Rue de l’Horlogerie 18<br />
+                1204 Geneva, Switzerland<br />
+                <a href="mailto:support@noire.com">support@noire.com</a><br />
+                <a href="tel:+412586892">+412-586-892</a>
+              </address>
+            ) : (
+              <ul class="footer__list">
+                {col.links.map((l) => (
+                  <li><a href={l.href}>{l.label}</a></li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <ul class="footer__socials">
+        {socials.map((s) => (
+          <li>
+            <a href={s.href} target="_blank" rel="noopener" aria-label={s.label}>
+              <Icon name={s.name} />
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="footer__copy">©2026. NOIRE. All rights are reserved</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: 12.5em; /* 200px */
+    padding-bottom: 2.5em; /* 40px */
+  }
+
+  .footer__wordmark {
+    display: flex;
+    justify-content: flex-end;
+    color: var(--color-white);
+  }
+
+  .footer__wordmark :global(svg) {
+    width: 74.5625em; /* 1193px */
+    height: auto;
+  }
+
+  .footer__info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 2em;
+    margin-top: 3.3125em; /* 53px */
+  }
+
+  .footer__newsletter {
+    display: flex;
+    flex-direction: column;
+    gap: 2em; /* 32px */
+    width: 27.1875em; /* 435px */
+    flex-shrink: 0;
+  }
+
+  .footer__newsletter-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2.0625em; /* 33px */
+  }
+
+  .footer__heading {
+    font-size: 1.25em;
+    line-height: 1.35;
+    letter-spacing: -0.8px;
+    text-transform: uppercase;
+    color: var(--color-white);
+  }
+
+  .footer__lead {
+    font-size: 1em;
+    font-weight: 500;
+    line-height: 1.375;
+    letter-spacing: -0.32px;
+    color: var(--color-text);
+  }
+
+  .footer__subscribe {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
+    height: 4.25em; /* 68px */
+    padding: 0.625em 0.625em 0.625em 1.5em;
+    border: 1px solid var(--color-border-input);
+  }
+
+  .footer__subscribe input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--color-white);
+    font-weight: 500;
+    line-height: 1.375;
+    letter-spacing: -0.32px;
+  }
+
+  .footer__subscribe input::placeholder {
+    color: var(--color-text);
+  }
+
+  .footer__subscribe button {
+    height: 3em; /* 48px */
+    padding: 0 2em;
+    background-color: var(--color-white);
+    color: #021d17;
+  }
+
+  .footer__subscribe button span {
+    font-size: 1.25em;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.4px;
+  }
+
+  .footer__subscribe:focus-within {
+    border-color: var(--color-white);
+  }
+
+  .footer__thanks {
+    font-size: 1em;
+    color: var(--color-accent);
+  }
+
+  .footer__columns {
+    display: grid;
+    grid-template-columns: repeat(4, 17.6875em); /* 283px */
+    gap: 1.25em; /* 20px */
+  }
+
+  .footer__col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em; /* 24px */
+  }
+
+  .footer__address,
+  .footer__list a {
+    font-size: 1.125em;
+    font-style: normal;
+    line-height: 1.333;
+    letter-spacing: -0.36px;
+    color: var(--color-text);
+  }
+
+  .footer__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em; /* 12px */
+  }
+
+  .footer__list a:hover,
+  .footer__address a:hover {
+    color: var(--color-white);
+  }
+
+  .footer__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 3.0625em; /* 49px */
+    min-height: 4.1875em; /* 67px */
+  }
+
+  .footer__socials {
+    display: flex;
+    gap: 2.25em; /* 36px */
+  }
+
+  .footer__socials a {
+    display: block;
+    transition: opacity var(--transition-fast);
+  }
+
+  .footer__socials a:hover {
+    opacity: 0.8;
+  }
+
+  .footer__copy {
+    width: 17.6875em;
+    font-size: 1em;
+    font-weight: 500;
+    line-height: 1.375;
+    letter-spacing: -0.32px;
+    color: var(--color-text);
+  }
+
+  @media (max-width: 991px) {
+    .footer {
+      margin-top: 8em;
+    }
+
+    .footer__wordmark :global(svg) {
+      width: 100%;
+    }
+
+    .footer__info {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 3em;
+    }
+
+    .footer__newsletter {
+      width: 100%;
+    }
+
+    .footer__columns {
+      grid-template-columns: repeat(2, 1fr);
+      row-gap: 2.5em;
+    }
+
+    .footer__copy {
+      width: auto;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .footer__bottom {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5em;
+    }
+
+    .footer__socials {
+      gap: 1.25em;
+    }
+
+    .footer__socials :global(svg) {
+      width: 1.875em;
+      height: 1.875em;
+    }
+
+    .footer__socials a {
+      display: grid;
+      place-items: center;
+      min-width: 2.75em;
+      min-height: 2.75em;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .footer__heading {
+      font-size: 1em;
+    }
+
+    .footer__address,
+    .footer__list a {
+      font-size: 0.875em;
+    }
+
+    .footer__subscribe button span {
+      font-size: 1em;
+    }
+
+    .footer__subscribe button {
+      padding: 0 1.25em;
+    }
+  }
+</style>

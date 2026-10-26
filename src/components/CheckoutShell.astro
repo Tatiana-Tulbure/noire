@@ -1,0 +1,215 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  step: 1 | 2 | 3;
+  /** "edit" = shipping (quantity steppers), "static" = payment, "order" = confirmation */
+  summary: "edit" | "static" | "order";
+}
+
+const { step, summary } = Astro.props;
+const steps = ["1.Shipping details", "2.Payment", "3.Confirmation"];
+---
+
+<div class:list={["co container container--padded", `co--${summary}`]}>
+  <div class="co__main">
+    <ol class="co__steps" aria-label="Checkout steps">
+      {steps.map((s, i) => {
+        const n = i + 1;
+        const done = n < step || (step === 3 && n === 3);
+        return (
+          <li class:list={["co__step", { "is-on": n <= step }]} aria-current={n === step ? "step" : undefined}>
+            <span>{s}</span>
+            {done && <Icon name="check" />}
+          </li>
+        );
+      })}
+    </ol>
+    <slot />
+  </div>
+
+  <aside class="co__summary" aria-labelledby="co-summary-title" data-summary={summary}>
+    <h2 class="title-md" id="co-summary-title">Order summary</h2>
+    <ul class="co__lines" data-summary-lines></ul>
+    {summary === "edit" && <button class="co__empty text-small" type="button" data-summary-empty>Empty the cart</button>}
+    <div class="summary">
+      {summary === "edit" && <p class="text-label">ORDER SUMMARY</p>}
+      <dl class="summary__rows">
+        <div><dt>Subtotal</dt><dd class="summary__value" data-summary-subtotal></dd></div>
+        {summary === "edit" ? (
+          <>
+            <div><dt>Taxes</dt><dd>Calculated at checkout</dd></div>
+            <div><dt>Delivery fee</dt><dd>Calculated at checkout</dd></div>
+          </>
+        ) : (
+          <>
+            <div><dt>Shipping</dt><dd>Complimentary</dd></div>
+            <div><dt>Delivery fee</dt><dd>0,00 €</dd></div>
+          </>
+        )}
+      </dl>
+      <div class="summary__total">
+        <span>Estimated total</span>
+        <span data-summary-total></span>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<script>
+  import { getCart, getLastOrder, cartTotal, emptyCart, onChange } from "../scripts/store";
+  import { lineHTML, bindLineControls, euroSuffix } from "../scripts/ui";
+
+  const box = document.querySelector<HTMLElement>("[data-summary]");
+  if (box) {
+    const mode = box.dataset.summary;
+    const list = box.querySelector<HTMLElement>("[data-summary-lines]")!;
+    const render = () => {
+      const lines = mode === "order" ? getLastOrder() : getCart();
+      list.innerHTML = lines.map((l) => lineHTML(l, mode === "edit")).join("");
+      const total = euroSuffix(cartTotal(lines));
+      box.querySelector("[data-summary-subtotal]")!.textContent = total;
+      box.querySelector("[data-summary-total]")!.textContent = total;
+      document.dispatchEvent(new CustomEvent("noire:summary", { detail: { count: lines.length } }));
+    };
+    if (mode === "edit") {
+      bindLineControls(list);
+      box.querySelector("[data-summary-empty]")?.addEventListener("click", () => emptyCart());
+    }
+    onChange(render);
+    render();
+  }
+</script>
+
+<style>
+  .co {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 3.75em;
+    margin-top: 3.75em; /* steps at y171 */
+  }
+
+  .co__main {
+    display: flex;
+    flex-direction: column;
+    gap: 2.75em; /* 44px */
+    width: 46.25em; /* 740px */
+    flex-shrink: 0;
+  }
+
+  .co__steps {
+    display: flex;
+    gap: 1.375em;
+    list-style: none;
+  }
+
+  .co__step {
+    display: flex;
+    align-items: center;
+    gap: 0.625em;
+    padding: 0.5em 0.875em;
+    border: 1px solid var(--color-border);
+    color: var(--color-muted);
+  }
+
+  .co__step.is-on {
+    border-color: var(--color-accent);
+    color: var(--color-text);
+  }
+
+  .co__step span {
+    font-size: 1.125em;
+    line-height: 1.333;
+    letter-spacing: -0.36px;
+  }
+
+  /* Order summary panel: #1c1f27, 60px padding */
+  .co__summary {
+    display: flex;
+    flex-direction: column;
+    width: 55.6875em; /* 891px */
+    padding: 3.75em;
+    background-color: var(--color-surface);
+  }
+
+  .co--edit .co__summary {
+    width: 47.875em; /* 766px */
+    margin-top: 15.8125em; /* panel starts at y426 */
+  }
+
+  .co__lines {
+    display: flex;
+    flex-direction: column;
+    gap: 1.125em;
+    margin-top: 2.75em;
+  }
+
+  .co__empty {
+    align-self: flex-start;
+    margin-top: 1.125em;
+  }
+
+  .co__empty:hover {
+    color: var(--color-white);
+  }
+
+  .co__summary .summary {
+    margin-top: 2.5em;
+  }
+
+  @media (max-width: 1279px) {
+    .co__main {
+      width: 42%;
+    }
+
+    .co__summary,
+    .co--edit .co__summary {
+      width: auto;
+      flex: 1;
+    }
+  }
+
+  @media (max-width: 991px) {
+    .co {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 3em;
+    }
+
+    .co__main {
+      width: 100%;
+    }
+
+    .co--edit .co__summary {
+      margin-top: 0;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .co__steps {
+      gap: 0.5em;
+    }
+
+    .co__step {
+      padding: 0.5em;
+    }
+
+    .co__step span {
+      font-size: 0.875em;
+    }
+
+    .co__step :global(svg) {
+      width: 1em;
+      height: 1em;
+    }
+
+    .co__summary {
+      padding: 1.5em 1em;
+    }
+
+    .co__summary .title-md {
+      font-size: 2.5em;
+    }
+  }
+</style>

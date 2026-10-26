@@ -1,0 +1,26 @@
+---
+// Inline SVG icons exported from the NOIRÉ Figma file (src/icons).
+// Sizes are converted from the SVG's px width/height to em so they follow the fluid scale.
+const icons = import.meta.glob<string>("../icons/*.svg", { query: "?raw", import: "default", eager: true });
+
+interface Props {
+  name: string;
+  class?: string;
+  /** Use currentColor for strokes/fills instead of the Figma colour */
+  current?: boolean;
+  label?: string;
+}
+
+const { name, class: className, current = false, label } = Astro.props;
+const raw = icons[`../icons/${name}.svg`];
+if (!raw) throw new Error(`Unknown icon: ${name}`);
+
+let svg = raw.replace(/<svg([^>]*?)width="([\d.]+)"([^>]*?)height="([\d.]+)"/, (_m, a, w, b, h) =>
+  `<svg${a}width="${+w / 16}em"${b}height="${+h / 16}em"`,
+);
+if (current) svg = svg.replace(/(stroke|fill)="#(?:[0-9A-Fa-f]{6})"/g, '$1="currentColor"');
+const attrs = `class="icon${className ? " " + className : ""}" ${label ? `role="img" aria-label="${label}"` : 'aria-hidden="true" focusable="false"'}`;
+svg = svg.replace("<svg", `<svg ${attrs}`);
+---
+
+<Fragment set:html={svg} />

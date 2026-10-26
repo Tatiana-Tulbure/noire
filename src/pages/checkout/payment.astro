@@ -1,0 +1,232 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CheckoutShell from "../../components/CheckoutShell.astro";
+---
+
+<BaseLayout title="Payment — NOIRÉ checkout" description="Choose a payment method.">
+  <CheckoutShell step={2} summary="static">
+    <form class="pay" data-pay-form novalidate>
+      <h1 class="title-lg">Payment method</h1>
+
+      <fieldset class="pay__methods">
+        <legend class="sr-only">Payment method</legend>
+        <label class="pay__method"><input type="radio" name="method" value="card" checked /><span class="pay__dot"></span><span>Card</span></label>
+        <label class="pay__method"><input type="radio" name="method" value="paypal" /><span class="pay__dot"></span><span>PayPal</span></label>
+        <label class="pay__method"><input type="radio" name="method" value="bank" /><span class="pay__dot"></span><span>Bank transfer</span></label>
+      </fieldset>
+
+      <p class="pay__demo text-small">Demo checkout — no payment is processed. Please don't enter real card details.</p>
+
+      <div class="pay__card" data-method-panel="card">
+        <div class="field">
+          <label class="sr-only" for="card-number">Card number</label>
+          <input class="input" id="card-number" name="card-number" placeholder="Card number" inputmode="numeric" autocomplete="off" required pattern="[0-9 ]{12,23}" maxlength="23" />
+          <p class="field__error" hidden>This field must be completed!</p>
+        </div>
+        <div class="pay__row">
+          <div class="field">
+            <label class="sr-only" for="card-date">Expiry date (MM/YY)</label>
+            <input class="input" id="card-date" name="card-date" placeholder="Date" inputmode="numeric" autocomplete="off" required pattern="(0[1-9]|1[0-2])\s?/\s?[0-9]{2}" maxlength="7" />
+            <p class="field__error" hidden>This field must be completed!</p>
+          </div>
+          <div class="field">
+            <label class="sr-only" for="card-cvv">CVV</label>
+            <input class="input" id="card-cvv" name="card-cvv" placeholder="CVV" inputmode="numeric" autocomplete="off" required pattern="[0-9]{3,4}" maxlength="4" />
+            <p class="field__error" hidden>This field must be completed!</p>
+          </div>
+        </div>
+        <div class="field">
+          <label class="sr-only" for="card-name">Name on card</label>
+          <input class="input" id="card-name" name="card-name" placeholder="Name on card" autocomplete="off" required />
+          <p class="field__error" hidden>This field must be completed!</p>
+        </div>
+      </div>
+
+      <p class="text-body pay__note" data-method-panel="paypal" hidden>You will be redirected to PayPal to complete your purchase.</p>
+      <p class="text-body pay__note" data-method-panel="bank" hidden>Bank details will be sent to your email. Your order ships once the transfer is received.</p>
+
+      <div class="pay__btns">
+        <a class="btn btn--ghost" href="/checkout/shipping/"><span>BACK TO SHIPPING</span></a>
+        <button class="btn btn--light" type="submit"><span>PAY NOW</span></button>
+      </div>
+    </form>
+
+    <p class="text-body" data-pay-empty hidden>Your cart is empty. <a class="accent-link" href="/collection/">Continue shopping</a></p>
+  </CheckoutShell>
+</BaseLayout>
+
+<script>
+  import { placeOrder } from "../../scripts/store";
+
+  const form = document.querySelector<HTMLFormElement>("[data-pay-form]")!;
+  const panels = form.querySelectorAll<HTMLElement>("[data-method-panel]");
+
+  form.querySelectorAll<HTMLInputElement>('input[name="method"]').forEach((r) =>
+    r.addEventListener("change", () => panels.forEach((p) => (p.hidden = p.dataset.methodPanel !== r.value))),
+  );
+
+  // Format card number in groups of four as you type
+  const num = form.querySelector<HTMLInputElement>("#card-number")!;
+  num.addEventListener("input", () => {
+    num.value = num.value.replace(/\D/g, "").slice(0, 19).replace(/(\d{4})(?=\d)/g, "$1 ");
+  });
+
+  const show = (el: HTMLInputElement, bad: boolean) => {
+    el.classList.toggle("is-invalid", bad);
+    el.setAttribute("aria-invalid", String(bad));
+    const msg = el.parentElement?.querySelector<HTMLElement>(".field__error");
+    if (msg) msg.hidden = !bad;
+  };
+
+  form.addEventListener("input", (e) => {
+    const el = e.target as HTMLInputElement;
+    if (el.classList.contains("is-invalid") && el.checkValidity()) show(el, false);
+  });
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const method = (form.querySelector('input[name="method"]:checked') as HTMLInputElement).value;
+    if (method === "card") {
+      const fields = [...form.querySelectorAll<HTMLInputElement>(".pay__card input")];
+      let first: HTMLInputElement | null = null;
+      fields.forEach((f) => {
+        const bad = !f.checkValidity();
+        show(f, bad);
+        if (bad && !first) first = f;
+      });
+      if (first) {
+        (first as HTMLInputElement).focus();
+        return;
+      }
+    }
+    // Card data never leaves this page: clear it before moving on
+    form.reset();
+    placeOrder();
+    location.href = "/checkout/confirmation/";
+  });
+
+  document.addEventListener("noire:summary", (e) => {
+    const empty = (e as CustomEvent).detail.count === 0;
+    form.hidden = empty;
+    document.querySelector<HTMLElement>("[data-pay-empty]")!.hidden = !empty;
+  });
+</script>
+
+<style>
+  .pay {
+    display: flex;
+    flex-direction: column;
+    gap: 2.25em; /* 36px */
+  }
+
+  .pay__methods {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75em;
+    border: none;
+  }
+
+  .pay__method {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5em;
+    height: 3em;
+    padding: 0 1.5em;
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    color: var(--color-text);
+  }
+
+  .pay__method:first-child {
+    justify-content: flex-start;
+  }
+
+  .pay__method:has(input:checked) {
+    border-color: var(--color-accent);
+  }
+
+  .pay__method:has(input:focus-visible) {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .pay__method input {
+    position: absolute;
+    opacity: 0;
+  }
+
+  .pay__method span:last-child {
+    font-size: 1.125em;
+    line-height: 1.333;
+    letter-spacing: -0.36px;
+  }
+
+  .pay__dot {
+    width: 1.25em;
+    height: 1.25em;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+  }
+
+  .pay__method:has(input:checked) .pay__dot {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .pay__demo {
+    margin-top: -1.5em;
+    color: var(--color-muted);
+  }
+
+  .pay__card {
+    display: flex;
+    flex-direction: column;
+    gap: 2.25em;
+  }
+
+  .pay__card .input {
+    padding-inline: 1.7778em; /* 32px */
+  }
+
+  .pay__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.625em; /* 42px */
+  }
+
+  .pay__btns {
+    display: grid;
+    grid-template-columns: 18.5em 1fr;
+    gap: 1.25em;
+  }
+
+  @media (max-width: 479px) {
+    .pay .title-lg {
+      font-size: 3em;
+    }
+
+    .pay__methods {
+      grid-template-columns: 1fr;
+    }
+
+    .pay__method,
+    .pay__method:first-child {
+      justify-content: flex-start;
+      height: 2.75em;
+    }
+
+    .pay__row {
+      gap: 0.75em;
+    }
+
+    .pay__btns {
+      grid-template-columns: 1fr;
+    }
+
+    .pay__btns .btn:last-child {
+      order: -1;
+    }
+  }
+</style>

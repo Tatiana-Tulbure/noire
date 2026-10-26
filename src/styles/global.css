@@ -1,0 +1,485 @@
+/* ==========================================================================
+   Fluid Scaling System
+   Viewport-based scaling — all em values scale automatically.
+   ========================================================================== */
+
+/* Desktop */
+:root {
+  --size-unit: 16; /* body font-size in design — no px */
+  --size-container-ideal: 1920; /* Figma frame width */
+  --size-container-min: 992px;
+  --size-container-max: 1920px; /* keep the 1920 design proportions on wide screens */
+  --size-container: clamp(var(--size-container-min), 100vw, var(--size-container-max));
+  --size-font: calc(var(--size-container) / (var(--size-container-ideal) / var(--size-unit)));
+  --container-padding: 3.75em; /* 60px — Figma page inset */
+}
+
+/* Tablet */
+@media screen and (max-width: 991px) {
+  :root {
+    --size-container-ideal: 834;
+    --size-container-min: 768px;
+    --size-container-max: 991px;
+    --container-padding: 1.5em;
+  }
+}
+
+/* Mobile Landscape */
+@media screen and (max-width: 767px) {
+  :root {
+    --size-container-ideal: 550;
+    --size-container-min: 480px;
+    --size-container-max: 767px;
+    --container-padding: 1em;
+  }
+}
+
+/* Mobile Portrait — Figma mobile frame is 360 */
+@media screen and (max-width: 479px) {
+  :root {
+    --size-container-ideal: 360;
+    --size-container-min: 320px;
+    --size-container-max: 479px;
+    --container-padding: 1em;
+  }
+}
+
+/* ==========================================================================
+   Design Tokens — NOIRÉ (1920 frame)
+   ========================================================================== */
+
+:root {
+  /* Colors */
+  --color-bg: #02060f;               /* page background */
+  --color-white: #eceef4;            /* headings, light buttons */
+  --color-ivory: #f8f6f2;            /* "balance of" / "ESSENCE" lines */
+  --color-accent: #bb3a64;           /* rose accent: active states, socials */
+  --color-text: #b2bcd3;             /* body copy */
+  --color-muted: #7b8497;            /* inactive labels */
+  --color-surface: #1c1f27;          /* cart drawer, order summary, account tabs */
+  --color-navy: #1a2b51;
+  --color-gradient-end: #170249;     /* essence section gradient */
+  --color-border: rgba(255, 250, 250, 0.3);
+  --color-border-input: #40444b;
+  --color-track: #2f3540;            /* carousel indicator track */
+  --color-placeholder: rgba(254, 254, 254, 0.3);
+  --color-summary-value: #d5d7dd;
+  --color-error: #ff0a0a;
+  --color-glass: rgba(255, 255, 255, 0.12);
+
+  /* Typography */
+  --font-heading: "Cormorant Garamond", "Times New Roman", serif;
+  --font-body: "Raleway", system-ui, sans-serif;
+
+  /* Spacing scale */
+  --spacing-xs: 0.5em;    /* 8px */
+  --spacing-sm: 0.75em;   /* 12px */
+  --spacing-md: 1.5em;    /* 24px */
+  --spacing-lg: 2.5em;    /* 40px */
+  --spacing-xl: 3.75em;   /* 60px */
+  --spacing-section: 12.5em; /* 200px between home sections */
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+}
+
+/* ==========================================================================
+   Reset
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--size-font);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+
+body.is-locked {
+  overflow: hidden;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  line-height: 1;
+  overflow-wrap: break-word;
+}
+
+p {
+  overflow-wrap: break-word;
+}
+
+/* ==========================================================================
+   Base Utilities
+   ========================================================================== */
+
+.container {
+  width: 100%;
+  max-width: var(--size-container);
+  margin-inline: auto;
+}
+
+.container--padded {
+  padding-inline: var(--container-padding);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Section title — 112px Cormorant uppercase ("NEW ARRIVALS", "SALES", "MY ACCOUNT") */
+.title-xl {
+  font-family: var(--font-heading);
+  font-size: 7em;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -2.24px;
+  text-transform: uppercase;
+  color: var(--color-white);
+}
+
+/* Page title — 80px ("FAT LOUNGE CHAIR", "SHIPPING DETAILS", "WISHLIST") */
+.title-lg {
+  font-family: var(--font-heading);
+  font-size: 5em;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -1.6px;
+  text-transform: uppercase;
+  color: var(--color-white);
+}
+
+/* Panel title — 60px ("My cart", "Order summary") */
+.title-md {
+  font-family: var(--font-heading);
+  font-size: 3.75em;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -1.2px;
+  color: var(--color-white);
+}
+
+/* Body copy — 18/24 */
+.text-body {
+  font-size: 1.125em;
+  font-weight: 400;
+  line-height: 1.333;
+  letter-spacing: -0.36px;
+  color: var(--color-text);
+}
+
+/* Small print — 14/19 */
+.text-small {
+  font-size: 0.875em;
+  font-weight: 400;
+  line-height: 1.357;
+  letter-spacing: -0.28px;
+  color: var(--color-text);
+}
+
+/* Label — 20/27 uppercase */
+.text-label {
+  font-size: 1.25em;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: -0.4px;
+  text-transform: uppercase;
+  color: var(--color-white);
+}
+
+.accent-link {
+  color: var(--color-accent);
+}
+
+.accent-link:hover {
+  text-decoration: underline;
+}
+
+/* Buttons — 64px tall, Raleway SemiBold 20/24 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75em;
+  min-height: 4em;
+  padding: 1.25em 2em;
+  font-family: var(--font-body);
+  font-size: 1em;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.btn > span {
+  font-size: 1.25em;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.4px;
+}
+
+.btn--light {
+  background-color: var(--color-white);
+  color: var(--color-bg);
+  border: 1px solid var(--color-white);
+}
+
+.btn--light:hover {
+  background-color: #ffffff;
+}
+
+.btn--outline {
+  background-color: var(--color-bg);
+  color: var(--color-white);
+  border: 1px solid var(--color-white);
+}
+
+.btn--outline:hover {
+  background-color: var(--color-white);
+  color: var(--color-bg);
+}
+
+.btn--ghost {
+  background-color: transparent;
+  color: #ffffff;
+  border: 1px solid var(--color-border);
+}
+
+.btn--ghost:hover {
+  border-color: var(--color-white);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+/* Form fields */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+}
+
+.field__label {
+  font-size: 1.125em;
+  line-height: 1.333;
+  letter-spacing: -0.36px;
+  color: var(--color-text);
+}
+
+.field__control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* 64px tall, 18/24 text — sizes in em of the 18px font */
+.input {
+  width: 100%;
+  height: 3.5556em;
+  padding: 0 1.3333em;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 0;
+  color: var(--color-white);
+  font-size: 1.125em;
+  line-height: 1.333;
+  letter-spacing: -0.36px;
+  outline: none;
+  appearance: none;
+}
+
+.input::placeholder {
+  color: var(--color-placeholder);
+}
+
+.input:focus {
+  border-color: var(--color-white);
+}
+
+.input.is-invalid {
+  border-color: var(--color-error);
+}
+
+.field__error {
+  font-size: 1.125em;
+  line-height: 1.333;
+  letter-spacing: -0.36px;
+  color: var(--color-error);
+}
+
+/* Checkbox — Figma 24px box, 4px gap */
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
+  cursor: pointer;
+  color: var(--color-muted);
+}
+
+.check input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.check__box {
+  position: relative;
+  width: 1.5em;
+  height: 1.5em;
+  flex-shrink: 0;
+}
+
+.check__box svg {
+  width: 100%;
+  height: 100%;
+}
+
+.check__box .icon-on {
+  display: none;
+}
+
+.check input:checked ~ .check__box .icon-on {
+  display: block;
+}
+
+.check input:checked ~ .check__box .icon-off {
+  display: none;
+}
+
+.check input:checked ~ .check__text {
+  color: var(--color-accent);
+}
+
+.check input:focus-visible ~ .check__box {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.check__text {
+  font-size: 1.125em;
+  line-height: 1.333;
+  letter-spacing: -0.36px;
+}
+
+/* Inline SVG icon sizing */
+.icon {
+  display: block;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Focus & Accessibility
+   ========================================================================== */
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.sr-only:focus {
+  position: fixed;
+  top: 0.5em;
+  left: 0.5em;
+  z-index: 9999;
+  width: auto;
+  height: auto;
+  padding: 0.75em 1.5em;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  background-color: var(--color-white);
+  color: var(--color-bg);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+[hidden] {
+  display: none !important;
+}

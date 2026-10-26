@@ -1,0 +1,65 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import AccountShell from "../../components/AccountShell.astro";
+import Field from "../../components/Field.astro";
+---
+
+<BaseLayout title="My account — NOIRÉ" description="Manage your NOIRÉ account details.">
+  <AccountShell title="My account" active="account">
+    <form class="profile" data-demo-form>
+      <div class="profile__grid">
+        <Field label="Name" name="name" placeholder="Enter your name" autocomplete="given-name" />
+        <Field label="Surname" name="surname" placeholder="Enter your surname" autocomplete="family-name" />
+        <Field label="Email address" name="email" type="email" placeholder="Enter your email" autocomplete="email" />
+        <Field label="Password" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" />
+        <Field label="Phone number" name="phone" type="tel" placeholder="Enter your phone number" autocomplete="tel" />
+        <Field label="New password" name="new-password" type="password" placeholder="Enter your new password" autocomplete="new-password" />
+      </div>
+      <button class="btn btn--light profile__save" type="submit"><span>SAVE</span></button>
+      <p class="profile__saved text-body" role="status" hidden>Your details have been saved.</p>
+    </form>
+  </AccountShell>
+</BaseLayout>
+
+<script>
+  import "../../scripts/forms.ts";
+  const form = document.querySelector<HTMLFormElement>(".profile");
+  form?.addEventListener("demo:valid", () => {
+    form.querySelector<HTMLElement>(".profile__saved")!.hidden = false;
+  });
+</script>
+
+<style>
+  .profile {
+    display: flex;
+    flex-direction: column;
+    gap: 3em; /* 48px */
+  }
+
+  .profile__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 1.5em;
+    row-gap: 2.25em;
+  }
+
+  .profile__save {
+    width: calc(50% - 0.75em);
+  }
+
+  .profile__saved {
+    margin-top: -1.5em;
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 767px) {
+    .profile__grid {
+      grid-template-columns: 1fr;
+      row-gap: 1.5em;
+    }
+
+    .profile__save {
+      width: 100%;
+    }
+  }
+</style>

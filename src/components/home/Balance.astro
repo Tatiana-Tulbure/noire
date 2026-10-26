@@ -1,0 +1,166 @@
+---
+import { img } from "../../data/products";
+
+const bg = img("balance-bg");
+const chair = img("balance-chair");
+---
+
+<!-- Figma "special_section": the chair cut-out sits above the headline, so the title reads "through" it -->
+<section class="balance" aria-labelledby="balance-title">
+  <div class="container container--padded">
+    <div class="balance__stage">
+      <img class="balance__img" src={bg.src} width={bg.width} height={bg.height} alt="" role="presentation" loading="lazy" />
+      <h2 class="balance__title" id="balance-title">
+        <span class="balance__line balance__line--1">The perfect</span>
+        <span class="balance__line balance__line--2">balance of</span>
+        <span class="balance__line balance__line--3">comfort and style</span>
+      </h2>
+      <img class="balance__img balance__img--front" src={chair.src} width={chair.width} height={chair.height} alt="Rose upholstered chair with a round seat" loading="lazy" />
+      <a class="btn btn--light balance__cta" href="/collection/"><span>Discover the collection</span></a>
+      <p class="text-body balance__text">
+        Every piece is created to bring balance, comfort, and timeless elegance into your space.<span class="balance__more"> Designed with careful attention to detail, our furniture blends refined aesthetics with everyday functionality, transforming interiors into calm, harmonious environments where style and comfort coexist effortlessly</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .balance {
+    margin-top: 12.5em; /* 200px */
+  }
+
+  /* Stage = Figma frame 1407×1635; children are placed in % so the whole composition scales together */
+  .balance__stage {
+    position: relative;
+    width: 87.9375em;
+    aspect-ratio: 1407 / 1635;
+    margin-inline: auto;
+  }
+
+  .balance__img {
+    position: absolute;
+    left: 6.681%;
+    top: 8.257%;
+    width: 85.287%;
+    height: 91.743%;
+    object-fit: cover;
+  }
+
+  .balance__img--front {
+    z-index: 2;
+  }
+
+  .balance__title {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    font-size: 8.75em; /* 140px */
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -2.8px;
+    text-transform: uppercase;
+    color: var(--color-white);
+  }
+
+  .balance__line {
+    position: absolute;
+    white-space: nowrap;
+  }
+
+  .balance__line--1 {
+    left: 39.303%;
+    top: 0;
+    width: 60.697%;
+    text-align: center;
+  }
+
+  .balance__line--2 {
+    left: 20.54%;
+    top: 7.339%;
+    color: var(--color-ivory);
+  }
+
+  .balance__line--3 {
+    left: 0;
+    top: 14.679%;
+    width: 98.649%;
+    text-align: center;
+  }
+
+  .balance__cta {
+    position: absolute;
+    z-index: 3;
+    left: 8.955%;
+    top: 23.976%;
+    width: 80.526%;
+    min-height: 3em; /* 48px in Figma */
+    padding-block: 0.75em;
+  }
+
+  .balance__text {
+    position: absolute;
+    z-index: 3;
+    left: 38.451%;
+    top: 30.336%;
+    width: 52.665%;
+  }
+
+  @media (max-width: 991px) {
+    .balance {
+      margin-top: 6em;
+    }
+
+    /* Scale the composition to the container width */
+    .balance__stage {
+      width: 100%;
+      font-size: calc((100vw - 2 * var(--container-padding)) / 87.9375);
+    }
+
+    .balance__title {
+      letter-spacing: -0.02em;
+    }
+
+    .balance__cta,
+    .balance__text {
+      font-size: var(--size-font);
+    }
+
+    .balance__cta {
+      min-height: 4em;
+    }
+
+    .balance__text {
+      top: 33%;
+    }
+
+    .balance__text > * {
+      font-size: inherit;
+    }
+  }
+
+  @media (max-width: 767px) {
+    /* Mobile frame: taller stage, button under the title, short copy over the chair */
+    .balance__stage {
+      aspect-ratio: 328 / 440;
+    }
+
+    .balance__cta {
+      top: 35%;
+      left: 0;
+      width: 100%;
+    }
+
+    .balance__more {
+      display: none;
+    }
+
+    .balance__text {
+      top: 54%;
+      left: 36%;
+      width: 62%;
+      font-size: calc(var(--size-font) * 0.875);
+      line-height: 1.357;
+      text-shadow: 0 0 10px var(--color-bg);
+    }
+  }
+</style>

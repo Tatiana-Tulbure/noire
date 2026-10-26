@@ -1,0 +1,241 @@
+---
+import Icon from "../Icon.astro";
+import { img } from "../../data/products";
+
+const hero = img("hero-chair");
+
+// Hotspots on the chair photo. Positions in px of the 1200×1498 Figma image, converted to em.
+// Only "Ergonomic comfort" exists in Figma; the other four cards reuse the same component.
+const spots = [
+  { x: 312, y: 240, title: "Ergonomic comfort", text: "Available in a variety of designs, from accent chairs to dining chairs, it combines practicality with visual charm.", open: true },
+  { x: 919, y: 392, title: "Sculpted backrest", text: "A rounded, enveloping back that supports the body and softens the silhouette.", alignEnd: true },
+  { x: 832, y: 769, title: "Premium upholstery", text: "A durable woven fabric with a soft hand, finished by experienced craftsmen.", alignEnd: true },
+  { x: 311, y: 771, title: "Generous cushioning", text: "Moulded foam padding that keeps its shape and comfort for years." },
+  { x: 378, y: 1253, title: "Tubular frame", text: "A slim tubular frame gives a light look and lasting stability." },
+];
+const em = (px: number) => `${px / 16}em`;
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__inner container container--padded">
+    <div class="hero__offer">
+      <h1 class="hero__title" id="hero-title">Elevate your space with timeless design</h1>
+      <p class="hero__lead">
+        Discover premium furniture crafted for modern living. Designed with elegance, built with exceptional craftsmanship, and created to transform every space into a timeless expression of style and comfort.
+      </p>
+      <a class="btn btn--light hero__cta" href="/collection/"><span>Discover the collection</span></a>
+    </div>
+
+    <div class="hero__media">
+      <img class="hero__img" src={hero.src} width={hero.width} height={hero.height} alt="Rose fabric chair with a round seat and tubular frame" fetchpriority="high" />
+      {spots.map((s, i) => (
+        <div class:list={["spot", { "spot--end": s.alignEnd }]} style={`left:${em(s.x)};top:${em(s.y)}`}>
+          <div class="spot__card" id={`spot-${i}`} hidden={!s.open}>
+            <p class="spot__title">{s.title}</p>
+            <p class="spot__text">{s.text}</p>
+          </div>
+          <button class="spot__btn" type="button" data-spot aria-expanded={s.open ? "true" : "false"} aria-controls={`spot-${i}`} aria-label={`${s.title} — show details`}>
+            <Icon name="plus-circle" class="spot__plus" />
+            <Icon name="minus-circle" class="spot__minus" />
+          </button>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-spot]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const open = btn.getAttribute("aria-expanded") !== "true";
+      document.querySelectorAll<HTMLButtonElement>("[data-spot]").forEach((other) => {
+        other.setAttribute("aria-expanded", "false");
+        document.getElementById(other.getAttribute("aria-controls")!)!.hidden = true;
+      });
+      btn.setAttribute("aria-expanded", String(open));
+      document.getElementById(btn.getAttribute("aria-controls")!)!.hidden = !open;
+    });
+  });
+</script>
+
+<style>
+  .hero {
+    overflow: hidden;
+  }
+
+  .hero__inner {
+    position: relative;
+    min-height: 93.625em; /* 1498px image */
+    margin-top: 5.75em;   /* 92px below the navbar */
+  }
+
+  .hero__offer {
+    display: flex;
+    flex-direction: column;
+    width: 36.6875em; /* 587px */
+  }
+
+  .hero__title {
+    font-size: 8.5em; /* 136px */
+    font-weight: 500;
+    line-height: 0.801; /* 109 / 136 */
+    letter-spacing: -2.72px;
+    text-transform: uppercase;
+    color: var(--color-white);
+  }
+
+  .hero__lead {
+    margin-top: 2.2222em; /* 40px at 18px */
+    font-size: 1.125em;
+    line-height: 1.333;
+    letter-spacing: -0.36px;
+  }
+
+  .hero__cta {
+    margin-top: 2.5em;
+  }
+
+  .hero__media {
+    position: absolute;
+    top: 0;
+    left: 50.6875em; /* 811px */
+    width: 75em;     /* 1200px */
+    height: 93.625em;
+  }
+
+  .hero__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .spot {
+    position: absolute;
+  }
+
+  .spot__btn {
+    display: block;
+    border-radius: 50%;
+  }
+
+  .spot__btn :global(svg) {
+    width: 4em;
+    height: 4em;
+  }
+
+  .spot__btn :global(.spot__minus) {
+    display: none;
+  }
+
+  .spot__btn[aria-expanded="true"] :global(.spot__plus) {
+    display: none;
+  }
+
+  .spot__btn[aria-expanded="true"] :global(.spot__minus) {
+    display: block;
+  }
+
+  /* Figma "benefis" card: 526px wide glass panel, 36px padding, 24px above the button */
+  .spot__card {
+    position: absolute;
+    bottom: calc(100% + 1.5em);
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625em;
+    width: 32.875em;
+    padding: 2.25em;
+    background-color: var(--color-glass);
+    backdrop-filter: blur(22.8px);
+    -webkit-backdrop-filter: blur(22.8px);
+  }
+
+  .spot--end .spot__card {
+    left: auto;
+    right: 0;
+  }
+
+  .spot__title {
+    font-size: 1.5em;
+    font-weight: 600;
+    line-height: 1.333;
+    color: var(--color-white);
+  }
+
+  .spot__text {
+    font-size: 1.125em;
+    line-height: 1.333;
+    letter-spacing: -0.36px;
+  }
+
+  @media (max-width: 991px) {
+    .hero__inner {
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero__offer {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      padding-block: 3em 4em;
+    }
+
+    .hero__title {
+      font-size: 6em;
+    }
+
+    .hero__media {
+      left: auto;
+      right: calc(var(--container-padding) * -1);
+      width: 70%;
+      height: 100%;
+    }
+
+    .hero__media::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, var(--color-bg) 0%, rgba(2, 6, 15, 0.2) 60%);
+    }
+
+    .spot {
+      display: none;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .hero__inner {
+      margin-top: 2em;
+    }
+
+    .hero__offer {
+      padding-block: 1.5em 4em;
+    }
+
+    .hero__title {
+      font-size: 4em; /* 64px */
+      line-height: 0.953; /* 61 / 64 */
+      letter-spacing: -1.28px;
+    }
+
+    .hero__lead {
+      margin-top: 7.5em;
+      font-size: 0.875em;
+      line-height: 1.357;
+      letter-spacing: -0.28px;
+      text-shadow: 0 0 12px var(--color-bg);
+    }
+
+    .hero__media {
+      right: calc(var(--container-padding) * -1);
+      left: calc(var(--container-padding) * -1);
+      width: auto;
+    }
+
+    .hero__media::after {
+      background: linear-gradient(180deg, rgba(2, 6, 15, 0.1) 0%, rgba(2, 6, 15, 0.35) 100%);
+    }
+  }
+</style>

@@ -1,0 +1,131 @@
+---
+import ProductCard from "../ProductCard.astro";
+import { homeTeaser } from "../../data/products";
+
+const [a, b, c] = homeTeaser;
+---
+
+<section class="teaser" aria-labelledby="teaser-title">
+  <div class="container container--padded" data-carousel>
+    <h2 class="title-xl" id="teaser-title">All products</h2>
+    <a class="btn btn--outline teaser__mobile-cta" href="/collection/"><span>Discover the collection</span></a>
+    <div class="teaser__row" data-carousel-track>
+      <ProductCard product={a} />
+      <ProductCard product={b} />
+      <a class="teaser__more" href="/collection/"><span>Discover  more</span></a>
+      <ProductCard product={c} />
+    </div>
+    <div class="indicator teaser__indicator" aria-hidden="true"><span data-carousel-thumb></span></div>
+  </div>
+</section>
+
+<style>
+  .teaser {
+    margin-top: 12.5em; /* 200px */
+  }
+
+  /* Figma: 4 tiles of 435×537, 20px gaps, 24px below the title */
+  .teaser__row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25em;
+    margin-top: 1.5em;
+  }
+
+  .teaser__row > :global(.card) {
+    --card-img-h: 21.375em; /* 342px */
+    height: 33.5625em;
+  }
+
+  .teaser__row > :global(.card .card__link) {
+    padding-top: 3.875em; /* image starts 62px from the card top */
+  }
+
+  .teaser__more {
+    display: grid;
+    place-items: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--color-accent);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    color: var(--color-white);
+    transition: background-color var(--transition-fast);
+  }
+
+  .teaser__more:hover {
+    background-color: rgba(255, 255, 255, 0.16);
+  }
+
+  .teaser__more span {
+    font-size: 1.5em;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.48px;
+    white-space: pre;
+  }
+
+  .teaser__mobile-cta,
+  .teaser__indicator {
+    display: none;
+  }
+
+  @media (max-width: 991px) {
+    .teaser {
+      margin-top: 6em;
+    }
+
+    .teaser__mobile-cta {
+      display: flex;
+      margin-top: 2em;
+    }
+
+    .teaser__more {
+      display: none;
+    }
+
+    .teaser__row {
+      display: flex;
+      gap: 1.125em;
+      margin-top: 2em;
+      margin-inline: calc(var(--container-padding) * -1);
+      padding-inline: var(--container-padding);
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--container-padding);
+      scrollbar-width: none;
+    }
+
+    .teaser__row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .teaser__row > :global(.card) {
+      --card-img-h: 18em;
+      flex: 0 0 min(22em, 70%);
+      height: auto;
+      scroll-snap-align: start;
+    }
+
+    .teaser__row > :global(.card .card__link) {
+      padding-top: 2.375em;
+    }
+
+    .teaser__indicator {
+      display: block;
+      margin-top: 1.5em;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .teaser .title-xl {
+      font-size: 2.75em;
+      font-weight: 500;
+      letter-spacing: -0.88px;
+    }
+
+    .teaser__row > :global(.card) {
+      --card-img-h: 12.75em;
+      flex-basis: 14.4375em;
+    }
+  }
+</style>

@@ -1,0 +1,121 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ProductCard from "../components/ProductCard.astro";
+import { products } from "../data/products";
+---
+
+<BaseLayout title="Wishlist — NOIRÉ" description="Your saved NOIRÉ pieces.">
+  <div class="wish container container--padded">
+    <h1 class="title-lg wish__title">Wishlist</h1>
+    <nav class="wish__crumbs" aria-label="Breadcrumb">
+      <a href="/">Home/</a>
+      <span aria-current="page">Wishlist</span>
+    </nav>
+
+    <!-- Every product is rendered once; the script shows the saved ones -->
+    <ul class="wish__grid" data-wish-grid>
+      {products.map((p) => (
+        <li data-wish-item={p.slug} hidden>
+          <ProductCard product={p} />
+        </li>
+      ))}
+    </ul>
+
+    <div class="wish__empty" data-wish-empty hidden>
+      <p class="text-body">Your wishlist is empty. Tap the heart on any piece to save it here.</p>
+      <a class="btn btn--light" href="/collection/"><span>CONTINUE SHOPPING</span></a>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { getWishlist, onChange } from "../scripts/store";
+
+  function render() {
+    const list = getWishlist();
+    const grid = document.querySelector<HTMLElement>("[data-wish-grid]")!;
+    document.querySelectorAll<HTMLElement>("[data-wish-item]").forEach((li) => {
+      li.hidden = !list.includes(li.dataset.wishItem!);
+    });
+    // Keep the order in which pieces were saved
+    list.forEach((slug) => {
+      const li = grid.querySelector(`[data-wish-item="${slug}"]`);
+      if (li) grid.appendChild(li);
+    });
+    document.querySelector<HTMLElement>("[data-wish-empty]")!.hidden = list.length > 0;
+  }
+
+  onChange(render);
+  render();
+</script>
+
+<style>
+  .wish__title {
+    margin-top: 0.75em; /* title top at 183px */
+    text-align: center;
+  }
+
+  .wish__crumbs {
+    display: flex;
+    gap: 0.875em;
+    margin-top: 2.75em;
+    font-size: 0.875em;
+    line-height: 1.357;
+    letter-spacing: -0.28px;
+    color: var(--color-white);
+  }
+
+  .wish__crumbs span {
+    color: var(--color-placeholder);
+  }
+
+  .wish__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25em;
+    margin-top: 2.25em;
+  }
+
+  .wish__grid :global(.card) {
+    --card-img-h: 24.75em;
+    height: 31.625em;        /* 506px */
+  }
+
+  .wish__grid :global(.card__link) {
+    padding-top: 2.25em;
+  }
+
+  .wish__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2em;
+    padding-block: 6em;
+    text-align: center;
+  }
+
+  @media (max-width: 991px) {
+    .wish__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .wish__grid :global(.card) {
+      --card-img-h: 18em;
+      height: auto;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .wish__title {
+      font-size: 3em;
+    }
+
+    .wish__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .wish__grid :global(.card) {
+      --card-img-h: 16em;
+    }
+  }
+</style>

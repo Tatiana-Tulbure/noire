@@ -1,0 +1,173 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import AccountShell from "../../components/AccountShell.astro";
+import Icon from "../../components/Icon.astro";
+import { img } from "../../data/products";
+
+// Sample orders from the Figma "order history" screen
+const orders = [
+  { no: "no:5812", date: "11/02/2025", total: "1889 €", items: [{ name: "Navy Velvet Dining Chair", price: "1889 €", image: img("product-navy-velvet-dining-chair"), href: "/product/navy-velvet-dining-chair/" }] },
+  { no: "no:5912", date: "19/07/2025", total: "1489 €", items: [{ name: "Cloud Bouclé Armchair", price: "1489 €", image: img("product-cloud-boucle-armchair"), href: "/product/cloud-boucle-armchair/" }] },
+  {
+    no: "no:7897", date: "19/07/2026", total: "3825 €", open: true,
+    items: [
+      { name: "Luxury Upholstered Lounge Chair with Comfortable Cushion", price: "1840 €", image: img("order-lounge-chair"), href: "/collection/" },
+      { name: "Elegant Fabric Dining Chair with Ergonomic Back Support", price: "1985 €", image: img("product-navy-velvet-dining-chair"), href: "/product/navy-velvet-dining-chair/" },
+    ],
+  },
+];
+const address = "8502 Preston Rd. Inglewood, Maine 98380";
+---
+
+<BaseLayout title="Order history — NOIRÉ" description="Your NOIRÉ orders.">
+  <AccountShell title="Order History" active="orders">
+    <ul class="orders">
+      {orders.map((o, i) => (
+        <li class="order">
+          <button class="order__row" type="button" data-accordion aria-expanded={o.open ? "true" : "false"} aria-controls={`order-${i}`}>
+            <span>{o.no}</span>
+            <span>{o.date}</span>
+            <span class="order__addr">{address}</span>
+            <span class="order__total">{o.total}</span>
+            <Icon name="order-chevron" class="order__chev" />
+          </button>
+          <ul class="order__items" id={`order-${i}`} hidden={!o.open}>
+            {o.items.map((it) => (
+              <li class="order__item">
+                <a class="order__img" href={it.href}>
+                  <img src={it.image.src} width={it.image.width} height={it.image.height} alt={it.name} loading="lazy" />
+                </a>
+                <div class="order__info">
+                  <a class="order__name" href={it.href}>{it.name}</a>
+                  <p class="order__price">{it.price}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </li>
+      ))}
+    </ul>
+  </AccountShell>
+</BaseLayout>
+
+<style>
+  .orders {
+    border: 1px solid var(--color-border);
+    border-bottom: none;
+  }
+
+  .order {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  /* Row: 72px tall, 24/32px padding */
+  .order__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr auto auto;
+    align-items: center;
+    column-gap: 2.5625em;
+    width: 100%;
+    min-height: 4.5em;
+    padding: 1.5em 2em;
+    text-align: left;
+    color: var(--color-text);
+  }
+
+  .order__row > span {
+    font-size: 1.125em;
+    line-height: 1.333;
+    letter-spacing: -0.36px;
+  }
+
+  .order__row .order__total {
+    font-weight: 600;
+    color: var(--color-white);
+    opacity: 0.89;
+  }
+
+  .order__row[aria-expanded="true"] :global(.order__chev) {
+    transform: rotate(180deg);
+  }
+
+  .order__items {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5em 1.5em 1.5em;
+  }
+
+  .order__item {
+    display: flex;
+    gap: 2.25em;
+    padding-block: 0.5em;
+  }
+
+  .order__img {
+    display: block;
+    flex-shrink: 0;
+    width: 25.0625em;  /* 401px */
+    height: 19.125em;  /* 306px */
+    border: 1px solid var(--color-border);
+  }
+
+  .order__img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .order__info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+    max-width: 26.375em;
+  }
+
+  .order__name {
+    font-size: 1.25em;
+    line-height: 1.35;
+    letter-spacing: -0.4px;
+    text-transform: uppercase;
+    color: var(--color-white);
+  }
+
+  .order__name:hover {
+    text-decoration: underline;
+  }
+
+  .order__price {
+    font-size: 1.125em;
+    line-height: 1.333;
+    color: var(--color-text);
+    opacity: 0.5;
+  }
+
+  @media (max-width: 767px) {
+    .order__row {
+      grid-template-columns: 1fr auto auto;
+      column-gap: 1em;
+      padding: 1em;
+    }
+
+    .order__row > span:nth-child(2),
+    .order__addr {
+      display: none;
+    }
+
+    .order__items {
+      padding: 0 1em 1em;
+    }
+
+    .order__item {
+      gap: 1em;
+    }
+
+    .order__img {
+      width: 8.5em;
+      height: 8.5em;
+    }
+
+    .order__name {
+      font-size: 1em;
+    }
+  }
+</style>

@@ -1,0 +1,46 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import AuthShell from "../components/AuthShell.astro";
+import Field from "../components/Field.astro";
+---
+
+<BaseLayout title="Sign in — NOIRÉ" description="Sign in to your NOIRÉ account to track orders and manage addresses.">
+  <AuthShell title="Welcome back">
+    <p class="text-body" slot="lead">Don't have an account yet? <a class="accent-link" href="/register/">Register now.</a></p>
+    <form class="auth-form" data-demo-form data-next="/account/">
+      <Field label="Email address" name="email" type="email" placeholder="Enter your email" autocomplete="email" required />
+      <div class="auth-form__pw">
+        <Field label="Password" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required reveal />
+        <a class="auth-form__forgot" href="/forgot-password/">Forgot password?</a>
+      </div>
+      <button class="btn btn--light" type="submit"><span>SIGN IN</span></button>
+    </form>
+  </AuthShell>
+</BaseLayout>
+
+<style>
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+  }
+
+  .auth-form__pw {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+  }
+
+  .auth-form__forgot {
+    align-self: flex-end;
+    font-size: 1.125em;
+    line-height: 1.333;
+    letter-spacing: -0.36px;
+    color: var(--color-muted);
+    text-decoration: underline;
+  }
+
+  .auth-form__forgot:hover {
+    color: var(--color-white);
+  }
+</style>

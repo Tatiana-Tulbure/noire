@@ -1,0 +1,49 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CheckoutShell from "../../components/CheckoutShell.astro";
+---
+
+<BaseLayout title="Thank you — NOIRÉ" description="Your NOIRÉ order has been accepted.">
+  <CheckoutShell step={3} summary="order">
+    <div class="thanks">
+      <div class="thanks__text">
+        <h1 class="title-lg">thank you!</h1>
+        <p class="text-body">Your order has been accepted and will be delivered within 14 days. You can check your email for details.</p>
+      </div>
+      <a class="btn btn--light thanks__btn" href="/collection/"><span>CONTINUE SHOPPING</span></a>
+    </div>
+  </CheckoutShell>
+</BaseLayout>
+
+<style>
+  .thanks {
+    display: flex;
+    flex-direction: column;
+    gap: 3.125em; /* 50px */
+    margin-top: 0.375em;
+  }
+
+  .thanks__text {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25em;
+  }
+
+  .thanks__text p {
+    max-width: 32.6667em; /* 588px at 18px */
+  }
+
+  .thanks__btn {
+    width: 27.25em; /* 436px */
+  }
+
+  @media (max-width: 479px) {
+    .thanks .title-lg {
+      font-size: 3em;
+    }
+
+    .thanks__btn {
+      width: 100%;
+    }
+  }
+</style>

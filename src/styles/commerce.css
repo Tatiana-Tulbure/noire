@@ -1,0 +1,203 @@
+/* ==========================================================================
+   Commerce pieces rendered by client scripts (cart lines, quantity stepper,
+   order summary) — global because the markup is built in the browser.
+   ========================================================================== */
+
+/* Order summary totals — cart drawer + checkout */
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25em;
+  margin-top: 2.5em;
+}
+
+.summary__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625em;
+}
+
+.summary__rows div,
+.summary__total {
+  display: flex;
+  justify-content: space-between;
+  gap: 1em;
+  font-size: 1.125em;
+  line-height: 1.333;
+  letter-spacing: -0.36px;
+}
+
+.summary__rows dt {
+  color: var(--color-placeholder);
+}
+
+.summary__rows dd {
+  color: var(--color-white);
+}
+
+.summary__rows dd.summary__value {
+  color: var(--color-summary-value);
+}
+
+.summary__total {
+  padding-top: 1.1111em; /* 20px at 18px */
+  border-top: 1px solid var(--color-border);
+  color: var(--color-white);
+}
+
+/* Cart line — Figma "product": 236px image box + info column, 24px gap */
+.line {
+  display: flex;
+  gap: 1.5em;
+}
+
+.line__img {
+  display: grid;
+  place-items: center;
+  width: 14.75em;  /* 236px */
+  height: 14.5em;  /* 232px */
+  flex-shrink: 0;
+  border: 1px solid var(--color-border);
+}
+
+.line__img img {
+  width: 13.125em;  /* 210px */
+  height: 12.75em;  /* 204px */
+  object-fit: contain;
+}
+
+.line__info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.line__name {
+  font-size: 1.25em;
+  line-height: 1.35;
+  letter-spacing: -0.4px;
+  text-transform: uppercase;
+  color: var(--color-white);
+}
+
+.line__name:hover {
+  text-decoration: underline;
+}
+
+.line__price {
+  margin-top: 1em;
+  font-size: 1em;
+  font-weight: 500;
+  line-height: 1.375;
+  letter-spacing: -0.32px;
+  text-transform: uppercase;
+  color: var(--color-white);
+}
+
+.line .qty {
+  margin-top: 1.5625em; /* 25px */
+}
+
+.line__remove {
+  align-self: flex-start;
+  margin-top: auto;
+  font-size: 0.875em;
+  line-height: 1.357;
+  letter-spacing: -0.28px;
+  color: var(--color-text);
+}
+
+.line__remove:hover {
+  color: var(--color-white);
+}
+
+/* Read-only lines (payment + confirmation summary) */
+.line--static .line__price {
+  margin-top: 1em;
+}
+
+/* Quantity stepper — Figma "Frame 35168" */
+.qty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25em;
+  align-self: flex-start;
+  padding: 0.5em;
+  border: 1px solid var(--color-border);
+}
+
+.qty button {
+  display: grid;
+  place-items: center;
+  width: 1.5em;
+  height: 1.5em;
+  color: var(--color-white);
+}
+
+.qty button:disabled {
+  color: var(--color-placeholder);
+  cursor: default;
+}
+
+.qty button svg {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.qty__value {
+  min-width: 1.45em;
+  font-size: 1.25em;
+  line-height: 1.35;
+  letter-spacing: -0.4px;
+  text-align: center;
+  color: var(--color-white);
+}
+
+@media (max-width: 479px) {
+  .line {
+    gap: 1em;
+  }
+
+  .line__img {
+    width: 8.5em;
+    height: 8.5em;
+  }
+
+  .line__img img {
+    width: 7.5em;
+    height: 7.5em;
+  }
+
+  .line__name {
+    font-size: 1em;
+  }
+
+  .summary__rows div,
+  .summary__total {
+    font-size: 1em;
+  }
+
+  .qty button {
+    width: 2.75em;
+    height: 2.75em;
+  }
+}
+
+/* Carousel progress indicator — Figma "indicator page": 3px track, rose thumb */
+.indicator {
+  position: relative;
+  height: 3px;
+  background-color: var(--color-track);
+}
+
+.indicator span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 37.7%;
+  background-color: var(--color-accent);
+  transition: left 100ms linear;
+}

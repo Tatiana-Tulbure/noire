@@ -1,0 +1,63 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import AuthShell from "../components/AuthShell.astro";
+import Field from "../components/Field.astro";
+import Icon from "../components/Icon.astro";
+---
+
+<BaseLayout title="Create your account — NOIRÉ" description="Create a NOIRÉ account to save your wishlist and check out faster.">
+  <AuthShell title="create your account" photo={false} wide>
+    <p class="text-body register__lead" slot="lead">Already have an account? <a class="accent-link" href="/login/">Sign in</a></p>
+    <form class="register" data-demo-form data-next="/account/">
+      <div class="register__fields">
+        <Field label="First name" name="first-name" placeholder="Enter your first name" autocomplete="given-name" required />
+        <Field label="Last name" name="last-name" placeholder="Enter your last name" autocomplete="family-name" required />
+        <Field label="Email address" name="email" type="email" placeholder="Enter your email address" autocomplete="email" required />
+      </div>
+      <label class="check register__terms">
+        <input type="checkbox" name="terms" required />
+        <span class="check__box">
+          <Icon name="checkbox" class="icon-off" />
+          <Icon name="checkbox-checked" class="icon-on" />
+        </span>
+        <span class="check__text">I agree to the <a href="/terms/">Terms &amp; Privacy Policy</a></span>
+      </label>
+      <button class="btn btn--light" type="submit"><span>Create account</span></button>
+    </form>
+  </AuthShell>
+</BaseLayout>
+
+<style>
+  .register__lead {
+    margin-top: -0.3333em;
+    color: var(--color-white);
+  }
+
+  .register {
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
+  }
+
+  .register__fields {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+  }
+
+  .register__fields :global(.field__label) {
+    color: var(--color-white);
+  }
+
+  .register__terms .check__text {
+    color: var(--color-text);
+  }
+
+  .register__terms a:hover {
+    text-decoration: underline;
+  }
+
+  :global(.check.is-invalid) .check__text {
+    color: var(--color-error);
+  }
+</style>

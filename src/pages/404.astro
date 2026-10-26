@@ -1,0 +1,61 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { img } from "../data/products";
+
+const art = img("404-graphic");
+---
+
+<BaseLayout title="Page not found — NOIRÉ" description="This page took a wrong turn.">
+  <section class="nf container container--padded">
+    <img class="nf__art" src={art.src} width={art.width} height={art.height} alt="404 — a pink armchair between two numbers four" />
+    <div class="nf__text">
+      <h1 class="sr-only">Page not found</h1>
+      <p>Oops!  Looks like this page took a wrong turn. Let's get you back to timeless design.</p>
+      <a class="btn btn--light" href="/"><span>BACK TO HOMEPAGE</span></a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Figma: 970×586 graphic at y171, 40px gaps, 587px text column */
+  .nf {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5em;
+    margin-top: 3.75em;
+  }
+
+  .nf__art {
+    width: 60.625em;
+    height: auto;
+  }
+
+  .nf__text {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5em;
+    width: 36.6875em;
+    text-align: center;
+  }
+
+  .nf__text p {
+    font-size: 1.5em;
+    font-weight: 500;
+    line-height: 1.333;
+    letter-spacing: -0.48px;
+    color: var(--color-text);
+    white-space: pre-line;
+  }
+
+  @media (max-width: 767px) {
+    .nf__art,
+    .nf__text {
+      width: 100%;
+    }
+
+    .nf__text p {
+      font-size: 1.125em;
+    }
+  }
+</style>
