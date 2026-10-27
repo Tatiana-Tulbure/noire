@@ -1,0 +1,221 @@
+/* ==========================================================================
+   Motion layer styles (see src/scripts/motion.ts).
+   html.motion       → visitor allows motion (set in <head>)
+   html.motion-ready → GSAP has applied its start states
+   html.intro        → first visit this session: show the NOIRÉ intro
+   ========================================================================== */
+
+/* Hide animated elements only until GSAP takes over — avoids a flash, never hides content without JS */
+html.motion:not(.motion-ready) :is(.hero__title, .hero__lead, .hero__cta, .hero__img, .spot, .card, .teaser__more) {
+  visibility: hidden;
+}
+
+/* ---------- Intro ---------- */
+
+.intro {
+  display: none;
+}
+
+html.has-intro:not(.intro-done) .intro {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25em;
+  background-color: var(--color-bg);
+  clip-path: inset(0% 0% 0% 0%);
+}
+
+html.has-intro:not(.intro-done) body {
+  overflow: hidden;
+}
+
+.intro__word {
+  display: flex;
+  font-family: var(--font-heading);
+  font-size: 9em;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--color-white);
+}
+
+.intro__mask {
+  display: block;
+  overflow: hidden;
+  padding-top: 0.12em; /* room for the accent on É */
+}
+
+.intro__char {
+  display: block;
+  transform: translateY(110%);
+}
+
+.intro__line {
+  display: block;
+  width: 12em;
+  height: 1px;
+  background-color: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+@media (max-width: 767px) {
+  .intro__word {
+    font-size: 5em;
+  }
+
+  .intro__line {
+    width: 8em;
+  }
+}
+
+/* ---------- Hero hotspots: soft magenta pulse ---------- */
+
+.hero.is-live .spot__btn {
+  position: relative;
+}
+
+.hero.is-live .spot__btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(187, 58, 100, 0.55);
+  animation: spot-pulse 2.8s ease-out infinite;
+  pointer-events: none;
+}
+
+.hero.is-live .spot:nth-child(3) .spot__btn::after { animation-delay: 0.5s; }
+.hero.is-live .spot:nth-child(4) .spot__btn::after { animation-delay: 1s; }
+.hero.is-live .spot:nth-child(5) .spot__btn::after { animation-delay: 1.5s; }
+.hero.is-live .spot:nth-child(6) .spot__btn::after { animation-delay: 2s; }
+
+@keyframes spot-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(187, 58, 100, 0.55); }
+  70% { box-shadow: 0 0 0 1.25em rgba(187, 58, 100, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(187, 58, 100, 0); }
+}
+
+/* ---------- Pinned Sales strip (desktop) ---------- */
+
+/* clip the strip at the left edge of its column so cards never slide over the SALES copy */
+.sales .sales__cards:has(.is-pinned) {
+  clip-path: inset(-2em -100vw -2em 0);
+}
+
+.sales .sales__track.is-pinned {
+  overflow: visible;
+  scroll-snap-type: none;
+}
+
+/* ---------- Custom cursor (desktop, fine pointer) ---------- */
+
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  width: 0.625em;
+  height: 0.625em;
+  margin: -0.3125em 0 0 -0.3125em;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+  pointer-events: none;
+  opacity: 0;
+  transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1), height 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    margin 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, background-color 0.3s ease;
+}
+
+.cursor.is-on {
+  opacity: 1;
+}
+
+.cursor.is-view {
+  width: 5.5em;
+  height: 5.5em;
+  margin: -2.75em 0 0 -2.75em;
+  background-color: rgba(187, 58, 100, 0.85);
+  backdrop-filter: blur(4px);
+}
+
+.cursor__label {
+  font-size: 0.875em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-white);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cursor.is-view .cursor__label {
+  opacity: 1;
+}
+
+/* ---------- Add-to-cart ghost ---------- */
+
+.fly-ghost {
+  position: fixed;
+  z-index: 95;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* ---------- Page transitions (cross-document View Transitions) ---------- */
+
+@view-transition {
+  navigation: auto;
+}
+
+/* The dark-magenta stage shows between the outgoing and incoming page */
+::view-transition {
+  background-color: #1a0713;
+}
+
+::view-transition-old(root) {
+  animation: vt-out 0.45s cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+
+::view-transition-new(root) {
+  animation: vt-in 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+@keyframes vt-out {
+  to {
+    opacity: 0;
+    transform: translateY(-2%);
+  }
+}
+
+@keyframes vt-in {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* ---------- Reduced motion: switch everything off ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .intro,
+  .cursor {
+    display: none !important;
+  }
+
+  .hero.is-live .spot__btn::after {
+    animation: none;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}

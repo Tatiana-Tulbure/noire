@@ -71,6 +71,7 @@ export function openCart() {
   drawer.hidden = false;
   document.body.classList.add("is-locked");
   drawer.querySelector<HTMLElement>(".cart__close")?.focus();
+  document.dispatchEvent(new CustomEvent("noire:cart-open"));
 }
 
 function closeCart() {
@@ -108,7 +109,11 @@ document.addEventListener("click", (e) => {
   const src = btn.dataset.qtySource ? document.querySelector<HTMLElement>(btn.dataset.qtySource) : null;
   const qty = src ? Number(src.textContent) || 1 : 1;
   addToCart(btn.dataset.addToCart!, qty);
-  openCart();
+  // motion.ts (when enabled) flies the product photo into the cart icon first
+  const fly = (window as unknown as { noireFly?: (img: HTMLImageElement) => Promise<void> }).noireFly;
+  const img = document.querySelector<HTMLImageElement>("[data-main-img]");
+  if (fly && img) fly(img).then(openCart);
+  else openCart();
 });
 
 /* ---------- Wishlist hearts ---------- */

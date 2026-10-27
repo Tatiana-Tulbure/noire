@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import "../styles/commerce.css";
+import "../styles/motion.css";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 import CartDrawer from "../components/CartDrawer.astro";
@@ -27,6 +28,19 @@ const ogImage = Astro.site ? new URL(image, Astro.site).href : image;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="format-detection" content="telephone=no, address=no" />
+    <script is:inline>
+      // Motion is opt-out: skip it for reduced-motion users. The intro plays once per session.
+      (function () {
+        var d = document.documentElement;
+        try {
+          if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+          d.classList.add("motion");
+          if (!sessionStorage.getItem("noire:intro")) d.classList.add("has-intro");
+        } catch (e) {}
+        // Safety net: never leave content hidden if the motion script fails to load
+        setTimeout(function () { d.classList.add("motion-ready", "intro-done"); }, 4500);
+      })();
+    </script>
     <title>{title}</title>
     <meta name="description" content={description} />
     <!-- Concept project: keep it out of search results -->
@@ -55,6 +69,12 @@ const ogImage = Astro.site ? new URL(image, Astro.site).href : image;
     <slot name="head" />
   </head>
   <body>
+    <div class="intro" aria-hidden="true">
+      <span class="intro__word">
+        {["N", "O", "I", "R", "É"].map((c) => <span class="intro__mask"><span class="intro__char">{c}</span></span>)}
+      </span>
+      <span class="intro__line"></span>
+    </div>
     <a class="sr-only" href="#main">Skip to content</a>
     <Navbar active={active} />
     <main id="main">
@@ -65,6 +85,7 @@ const ogImage = Astro.site ? new URL(image, Astro.site).href : image;
     <script id="noire-catalog" type="application/json" set:html={JSON.stringify(clientCatalog)} />
     <script>
       import "../scripts/ui.ts";
+      import "../scripts/motion.ts";
     </script>
   </body>
 </html>

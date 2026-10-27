@@ -1,0 +1,321 @@
+// NOIRÉ motion layer — GSAP + ScrollTrigger + SplitText.
+// Calm, gallery-like timing (expo/power3 eases, no bounce). Everything here is progressive
+// enhancement: html.motion is only set when the visitor hasn't asked for reduced motion.
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
+
+gsap.registerPlugin(ScrollTrigger, SplitText);
+
+const root = document.documentElement;
+const enabled = root.classList.contains("motion");
+const EASE = "expo.out";
+const $ = <T extends Element = HTMLElement>(sel: string, scope: ParentNode = document) => [...scope.querySelectorAll<T>(sel)];
+
+if (enabled) init();
+
+function init() {
+  // Initial (hidden) states are set here, *then* html.motion-ready lets CSS stop hiding things.
+  const hero = document.querySelector<HTMLElement>(".hero");
+  const heroParts = hero ? $(".hero__lead, .hero__cta, .spot", hero) : [];
+  if (hero) {
+    gsap.set(heroParts, { autoAlpha: 0, y: 24 });
+    gsap.set(".hero__title", { autoAlpha: 0 });
+    gsap.set(".hero__img", { scale: 1.12, autoAlpha: 0 });
+  }
+  const cardEls = $(".card, .teaser__more");
+  if (cardEls.length) gsap.set(cardEls, { autoAlpha: 0, y: 60 });
+  root.classList.add("motion-ready");
+
+  const intro = playIntro();
+
+  document.fonts.ready.then(() => {
+    const start = intro ? intro.duration() - 0.55 : 0.1;
+    heroIn(start);
+    headings();
+    images();
+    cards();
+    parallax();
+    footerWordmark();
+    desktopOnly();
+    ScrollTrigger.refresh();
+  });
+
+  microInteractions();
+}
+
+/* ---------- 1. Intro: NOIRÉ letters rise, then the curtain lifts (once per session) ---------- */
+
+function playIntro(): gsap.core.Timeline | null {
+  const el = document.querySelector<HTMLElement>(".intro");
+  if (!el || !root.classList.contains("has-intro")) return null;
+  try {
+    sessionStorage.setItem("noire:intro", "1");
+  } catch {
+    /* private mode */
+  }
+  const tl = gsap.timeline({
+    defaults: { ease: EASE },
+    onComplete: () => {
+      root.classList.add("intro-done");
+      el.remove();
+    },
+  });
+  tl.fromTo(".intro__char", { y: 0, yPercent: 110 }, { yPercent: 0, duration: 1.1, stagger: 0.08 })
+    .fromTo(".intro__line", { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: "power3.inOut" }, "-=0.6")
+    .to(".intro__char", { yPercent: -110, duration: 0.7, stagger: 0.05, ease: "power3.in" }, "+=0.25")
+    .to(".intro__line", { scaleX: 0, transformOrigin: "right center", duration: 0.5, ease: "power3.in" }, "<0.1")
+    .to(el, { clipPath: "inset(0% 0% 100% 0%)", duration: 0.9, ease: "expo.inOut" }, "-=0.2");
+  return tl;
+}
+
+/* ---------- 2. Hero: masked character reveal, image scale-in + parallax, hotspots ---------- */
+
+function heroIn(delay: number) {
+  const title = document.querySelector<HTMLElement>(".hero__title");
+  if (!title) return;
+  const split = SplitText.create(title, { type: "lines,chars", mask: "lines" });
+  gsap.set(title, { autoAlpha: 1 });
+  if (!document.querySelector(".hero__img")) return;
+  const tl = gsap.timeline({ delay, defaults: { ease: EASE } });
+  tl.from(split.chars, { yPercent: 115, duration: 1.4, stagger: 0.022, onComplete: () => split.revert() })
+    .to(".hero__img", { scale: 1, autoAlpha: 1, duration: 2.2, ease: "power3.out" }, 0)
+    .to(".hero__lead, .hero__cta", { autoAlpha: 1, y: 0, duration: 1.1, stagger: 0.12 }, 0.6)
+    .to(".spot", { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.12, onComplete: () => document.querySelector(".hero")?.classList.add("is-live") }, 1.1);
+
+  // Scroll parallax on the chair photo
+  gsap.to(".hero__img", {
+    yPercent: 8,
+    ease: "none",
+    scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true },
+  });
+}
+
+/* ---------- 3. Scroll reveals ---------- */
+
+function headings() {
+  $(".title-xl, .title-lg, .col-hero__title").forEach((el) => {
+    if (el.closest(".hero")) return;
+    const split = SplitText.create(el, { type: "lines,words", mask: "lines" });
+    gsap.from(split.words, {
+      yPercent: 110,
+      duration: 1.3,
+      stagger: 0.06,
+      ease: EASE,
+      scrollTrigger: { trigger: el, start: "top 88%", once: true },
+      onComplete: () => split.revert(),
+    });
+  });
+
+  // Layered display words (Balance + Essence) rise and fade
+  $(".balance__line, .essence__word").forEach((el) => {
+    gsap.from(el, {
+      yPercent: 40,
+      autoAlpha: 0,
+      duration: 1.6,
+      ease: EASE,
+      scrollTrigger: { trigger: el.closest("section")!, start: "top 75%", once: true },
+    });
+  });
+}
+
+function images() {
+  // Clip-path wipe, bottom → top
+  $(".col-hero__img, .auth__photo, .pdp__stage, .pdp__thumb, .balance__stage, .order__img, .nf__art").forEach((el, i) => {
+    gsap.fromTo(
+      el,
+      { clipPath: "inset(100% 0% 0% 0%)" },
+      {
+        clipPath: "inset(0% 0% 0% 0%)",
+        duration: 1.6,
+        ease: "expo.inOut",
+        delay: el.classList.contains("pdp__thumb") ? 0.1 * (i % 3) : 0,
+        scrollTrigger: { trigger: el, start: "top 90%", once: true },
+        clearProps: "clipPath",
+      },
+    );
+  });
+}
+
+function cards() {
+  if (!document.querySelector(".card, .teaser__more")) return;
+  ScrollTrigger.batch(".card, .teaser__more", {
+    start: "top 95%",
+    once: true,
+    onEnter: (batch) => gsap.to(batch, { autoAlpha: 1, y: 0, duration: 1.1, stagger: 0.09, ease: "power3.out", overwrite: "auto" }),
+  });
+  // Cards that appear later (filters, "More results", wishlist) need fresh trigger positions
+  document.addEventListener("noire:change", () => ScrollTrigger.refresh());
+  document.querySelector("[data-filters]")?.addEventListener("input", () => requestAnimationFrame(() => ScrollTrigger.refresh()));
+  document.querySelector("[data-more]")?.addEventListener("click", () => requestAnimationFrame(() => ScrollTrigger.refresh()));
+}
+
+function parallax() {
+  const scrub = (target: string, trigger: string, from: number, to: number) => {
+    if (!document.querySelector(target)) return;
+    gsap.fromTo(target, { yPercent: from }, { yPercent: to, ease: "none", scrollTrigger: { trigger, start: "top bottom", end: "bottom top", scrub: true } });
+  };
+  scrub(".balance__img--front", ".balance", 6, -6);
+  scrub(".essence__chair--white", ".essence", 10, -10);
+  scrub(".essence__chair--pink", ".essence", -4, 6);
+}
+
+function footerWordmark() {
+  const paths = $<SVGPathElement>(".footer__wordmark path");
+  if (!paths.length) return;
+  gsap.from(paths, {
+    yPercent: 100,
+    stagger: 0.08,
+    ease: "none",
+    scrollTrigger: { trigger: ".footer", start: "top 95%", end: "top 35%", scrub: 1 },
+  });
+}
+
+/* ---------- 4. Desktop: pinned horizontal Sales strip, mouse parallax ---------- */
+
+function desktopOnly() {
+  const mm = gsap.matchMedia();
+  mm.add("(min-width: 992px)", () => {
+    const section = document.querySelector<HTMLElement>(".sales");
+    const track = document.querySelector<HTMLElement>(".sales__track");
+    const thumb = document.querySelector<HTMLElement>(".sales [data-carousel-thumb]");
+    if (section && track) {
+      track.classList.add("is-pinned");
+      const distance = () => Math.max(0, track.scrollWidth - track.clientWidth);
+      const tween = gsap.to(track.children, {
+        x: () => -distance(),
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "center center",
+          end: () => `+=${distance()}`,
+          scrub: 1,
+          pin: true,
+          invalidateOnRefresh: true,
+          onUpdate: (st) => {
+            if (!thumb) return;
+            const w = parseFloat(thumb.style.width) || 38;
+            thumb.style.left = `${st.progress * (100 - w)}%`;
+          },
+        },
+      });
+      return () => {
+        tween.scrollTrigger?.kill();
+        tween.kill();
+        gsap.set(track.children, { clearProps: "transform" });
+        track.classList.remove("is-pinned");
+      };
+    }
+  });
+
+  // Gentle mouse parallax on the hero photo (fine pointers only)
+  mm.add("(min-width: 992px) and (pointer: fine)", () => {
+    const media = document.querySelector<HTMLElement>(".hero__media");
+    if (!media) return;
+    const xTo = gsap.quickTo(media, "x", { duration: 1.2, ease: "power3.out" });
+    const yTo = gsap.quickTo(media, "y", { duration: 1.2, ease: "power3.out" });
+    const move = (e: MouseEvent) => {
+      xTo((e.clientX / innerWidth - 0.5) * -24);
+      yTo((e.clientY / innerHeight - 0.5) * -16);
+    };
+    window.addEventListener("mousemove", move);
+    return () => window.removeEventListener("mousemove", move);
+  });
+}
+
+/* ---------- 5. Micro-interactions ---------- */
+
+function microInteractions() {
+  const mm = gsap.matchMedia();
+
+  // Magnetic primary buttons + custom cursor — desktop pointers only
+  mm.add("(min-width: 992px) and (pointer: fine)", () => {
+    const cleanups: (() => void)[] = [];
+
+    $(".btn--light, .btn--outline").forEach((btn) => {
+      const xTo = gsap.quickTo(btn, "x", { duration: 0.6, ease: "power3.out" });
+      const yTo = gsap.quickTo(btn, "y", { duration: 0.6, ease: "power3.out" });
+      const move = (e: MouseEvent) => {
+        const r = btn.getBoundingClientRect();
+        xTo((e.clientX - (r.left + r.width / 2)) * 0.12);
+        yTo((e.clientY - (r.top + r.height / 2)) * 0.3);
+      };
+      const leave = () => {
+        xTo(0);
+        yTo(0);
+      };
+      btn.addEventListener("mousemove", move);
+      btn.addEventListener("mouseleave", leave);
+      cleanups.push(() => {
+        btn.removeEventListener("mousemove", move);
+        btn.removeEventListener("mouseleave", leave);
+        gsap.set(btn, { clearProps: "transform" });
+      });
+    });
+
+    const cursor = document.createElement("div");
+    cursor.className = "cursor";
+    cursor.setAttribute("aria-hidden", "true");
+    cursor.innerHTML = '<span class="cursor__label">View</span>';
+    document.body.appendChild(cursor);
+    const cx = gsap.quickTo(cursor, "x", { duration: 0.45, ease: "power3.out" });
+    const cy = gsap.quickTo(cursor, "y", { duration: 0.45, ease: "power3.out" });
+    const move = (e: MouseEvent) => {
+      cx(e.clientX);
+      cy(e.clientY);
+      cursor.classList.add("is-on");
+      const overCard = (e.target as HTMLElement).closest(".card__link");
+      cursor.classList.toggle("is-view", !!overCard);
+    };
+    const out = () => cursor.classList.remove("is-on");
+    window.addEventListener("mousemove", move);
+    document.addEventListener("mouseleave", out);
+    cleanups.push(() => {
+      window.removeEventListener("mousemove", move);
+      document.removeEventListener("mouseleave", out);
+      cursor.remove();
+    });
+
+    return () => cleanups.forEach((fn) => fn());
+  });
+
+  // Heart pop on wishlist toggle (runs after ui.ts flips aria-pressed)
+  document.addEventListener("click", (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLElement>("[data-wish]");
+    if (!btn) return;
+    requestAnimationFrame(() => {
+      const on = btn.getAttribute("aria-pressed") === "true";
+      gsap.fromTo(btn, { scale: on ? 1.45 : 0.75 }, { scale: 1, duration: 0.6, ease: "power3.out" });
+    });
+  });
+
+  // Add to cart: the product photo glides into the cart icon, then the drawer opens
+  (window as unknown as { noireFly?: (img: HTMLImageElement) => Promise<void> }).noireFly = (img) =>
+    new Promise((resolve) => {
+      const target = $("[data-cart-open]").find((el) => el.offsetParent !== null);
+      if (!target) return resolve();
+      const from = img.getBoundingClientRect();
+      const to = target.getBoundingClientRect();
+      const ghost = img.cloneNode() as HTMLImageElement;
+      ghost.className = "fly-ghost";
+      Object.assign(ghost.style, { left: `${from.left}px`, top: `${from.top}px`, width: `${from.width}px`, height: `${from.height}px` });
+      document.body.appendChild(ghost);
+      gsap
+        .timeline({ onComplete: () => (ghost.remove(), resolve()) })
+        .to(ghost, {
+          x: to.left + to.width / 2 - (from.left + from.width / 2),
+          y: to.top + to.height / 2 - (from.top + from.height / 2),
+          scale: 0.06,
+          autoAlpha: 0.4,
+          duration: 0.85,
+          ease: "power3.inOut",
+        })
+        .fromTo(target, { scale: 1.35 }, { scale: 1, duration: 0.5, ease: "power3.out" }, "-=0.15");
+    });
+
+  // Cart drawer: panel slides in, lines stagger
+  document.addEventListener("noire:cart-open", () => {
+    gsap.fromTo(".cart__panel", { x: 60, autoAlpha: 0 }, { x: 0, autoAlpha: 1, duration: 0.7, ease: "power3.out" });
+    gsap.fromTo(".cart .line, .cart__blank > *", { y: 30, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.7, stagger: 0.08, delay: 0.12, ease: "power3.out" });
+  });
+}
