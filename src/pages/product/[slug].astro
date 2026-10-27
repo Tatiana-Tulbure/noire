@@ -2,7 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ProductCard from "../../components/ProductCard.astro";
 import Icon from "../../components/Icon.astro";
-import { products, alsoLike, img, eurLong, type Product } from "../../data/products";
+import { products, alsoLike, img, eurLong, variants, defaultVariant, type Product } from "../../data/products";
 
 export function getStaticPaths() {
   return products.map((p) => ({ params: { slug: p.slug }, props: { product: p } }));
@@ -18,15 +18,10 @@ const isFat = product.slug === "fat-lounge-chair";
 
 // Gallery + colour swatches exist in Figma for the Fat Lounge Chair only
 const gallery = isFat ? ["fat-detail-1", "fat-detail-2", "fat-detail-3"].map(img) : [];
-const swatches = isFat
-  ? [
-      { name: "Cognac bouclé", image: img("fat-color-1") },
-      { name: "Ivory bouclé", image: img("fat-color-2") },
-      { name: "Bordeaux bouclé", image: img("fat-color-3") },
-      { name: "Rosewood bouclé", image: img("fat-color-4") },
-    ]
-  : [];
-const activeSwatch = 2;
+const swatches = (variants[product.slug] ?? []).map((v) => ({ ...v, image: img(v.image) }));
+const activeSwatch = defaultVariant;
+// The main photo stays the Figma hero shot; swatches swap in their variant (crossfade) and tint the glow
+const tint = swatches[activeSwatch]?.tint ?? "#bb3a64";
 
 const related = alsoLike.filter((p) => p.slug !== product.slug).slice(0, 5);
 
@@ -64,7 +59,8 @@ const info = [
 
     <div class="pdp__main">
       <div class="pdp__media">
-        <div class="pdp__stage">
+        <div class="pdp__stage" data-stage>
+          <div class="pdp__glow" style={`color:${tint}`} data-glow aria-hidden="true"></div>
           <img class="pdp__img" src={main.src} width={main.width} height={main.height} alt={product.name} fetchpriority="high" data-main-img />
         </div>
         {gallery.length > 0 && (
@@ -93,7 +89,7 @@ const info = [
             <div class="pdp__swatches">
               {swatches.map((s, i) => (
                 <label class="swatch">
-                  <input type="radio" name="color" value={s.name} checked={i === activeSwatch} data-swatch={s.image.src} />
+                  <input type="radio" name="color" value={s.name} checked={i === activeSwatch} data-swatch={s.image.src} data-tint={s.tint} />
                   <img src={s.image.src} width={s.image.width} height={s.image.height} alt={s.name} loading="lazy" />
                 </label>
               ))}
@@ -160,10 +156,16 @@ const info = [
 
   const mainImg = document.querySelector<HTMLImageElement>("[data-main-img]");
   const colorName = document.querySelector("[data-color-name]");
+  const glow = document.querySelector<HTMLElement>("[data-glow]");
   document.querySelectorAll<HTMLInputElement>("[data-swatch]").forEach((input) => {
     input.addEventListener("change", () => {
-      if (mainImg) mainImg.src = input.dataset.swatch!;
       if (colorName) colorName.textContent = input.value;
+      if (glow) glow.style.color = input.dataset.tint!;
+      if (!mainImg) return;
+      // motion.ts provides a crossfade; without it (reduced motion) the photo swaps instantly
+      const swap = (window as unknown as { noireSwap?: (img: HTMLImageElement, src: string) => void }).noireSwap;
+      if (swap) swap(mainImg, input.dataset.swatch!);
+      else mainImg.src = input.dataset.swatch!;
     });
   });
 </script>
@@ -208,7 +210,23 @@ const info = [
     border: 1px solid var(--color-border);
   }
 
+  .pdp__stage {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Discreet glow in the chosen colour, behind the product */
+  .pdp__glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(45% 45% at 50% 58%, currentColor 0%, transparent 100%);
+    opacity: 0.16;
+    transition: color 0.8s ease;
+    pointer-events: none;
+  }
+
   .pdp__img {
+    position: relative;
     width: 59.9375em;  /* 959px */
     height: 41.25em;   /* 660px */
     object-fit: contain;

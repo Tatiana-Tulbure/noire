@@ -201,3 +201,17 @@
   background-color: var(--color-accent);
   transition: left 100ms linear;
 }
+
+/* Scroll progress — thin rose line on top of every page */
+.progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  height: 2px;
+  background-color: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+}

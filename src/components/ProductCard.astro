@@ -19,6 +19,7 @@ const href = `/product/${product.slug}/`;
     <Icon name="heart" class="icon-off" />
     <Icon name="heart-filled" class="icon-on" />
   </button>
+  <button class="card__quick" type="button" data-quick={product.slug} aria-label={`Quick view: ${product.name}`}><span>Quick view</span></button>
   <a class="card__link" href={href}>
     <img
       class="card__img"
@@ -77,6 +78,43 @@ const href = `/product/${product.slug}/`;
 
   .card__wish:hover :global(.icon-off path) {
     stroke-opacity: 1;
+  }
+
+  /* Quick view — appears on hover/focus (always visible on touch screens) */
+  .card__quick {
+    position: absolute;
+    top: 1.5em;
+    left: 1.5em;
+    z-index: 2;
+    padding: 0.35em 0.75em;
+    border: 1px solid var(--color-border);
+    background-color: rgba(2, 6, 15, 0.6);
+    color: var(--color-white);
+    opacity: 0;
+    transition: opacity var(--transition-base), border-color var(--transition-fast);
+  }
+
+  .card__quick span {
+    font-size: 0.75em;
+    font-weight: 500;
+    line-height: 1.333;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+
+  .card:hover .card__quick,
+  .card__quick:focus-visible {
+    opacity: 1;
+  }
+
+  .card__quick:hover {
+    border-color: var(--color-accent);
+  }
+
+  @media (hover: none) {
+    .card__quick {
+      opacity: 1;
+    }
   }
 
   .card__link {

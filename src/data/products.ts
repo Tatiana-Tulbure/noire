@@ -201,7 +201,27 @@ export const euroPrefix = (n: number) => `€${n}`;              // product card
 export const euroSuffix = (n: number) => `${n} €`;             // cart, order summary
 export const eurLong = (n: number) => `${n.toLocaleString("en-US")} EUR`; // product page
 
-/** Minimal product data shipped to the browser for cart / wishlist rendering */
+/** Colour variants (Figma: Fat Lounge Chair only). tint = discreet glow colour behind the product */
+export const variants: Record<string, { name: string; image: string; tint: string }[]> = {
+  "fat-lounge-chair": [
+    { name: "Cognac bouclé", image: "fat-color-1", tint: "#b8642e" },
+    { name: "Ivory bouclé", image: "fat-color-2", tint: "#e8e2d6" },
+    { name: "Bordeaux bouclé", image: "fat-color-3", tint: "#9b1f35" },
+    { name: "Rosewood bouclé", image: "fat-color-4", tint: "#b56b6b" },
+  ],
+};
+export const defaultVariant = 2;
+
+/** Minimal product data shipped to the browser for cart, wishlist and quick view */
 export const clientCatalog = Object.fromEntries(
-  products.map((p) => [p.slug, { name: p.name, price: p.price, image: img(p.image).src }]),
+  products.map((p) => [
+    p.slug,
+    {
+      name: p.name,
+      price: p.price,
+      image: img(p.image).src,
+      text: p.description.length > 190 ? p.description.slice(0, p.description.lastIndexOf(" ", 187)) + "…" : p.description,
+      variants: (variants[p.slug] ?? []).map((v) => ({ name: v.name, image: img(v.image).src, tint: v.tint })),
+    },
+  ]),
 );

@@ -219,3 +219,25 @@ html.has-intro:not(.intro-done) body {
     animation: none;
   }
 }
+
+/* ---------- Hero studio light (desktop pointer) ---------- */
+
+.hero__light {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 40em;
+  height: 40em;
+  margin: -20em 0 0 -20em;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 214, 230, 0.55) 0%, rgba(255, 190, 215, 0.18) 35%, transparent 65%);
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.hero__media .spot {
+  z-index: 2;
+}

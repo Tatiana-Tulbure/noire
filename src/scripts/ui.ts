@@ -111,10 +111,96 @@ document.addEventListener("click", (e) => {
   addToCart(btn.dataset.addToCart!, qty);
   // motion.ts (when enabled) flies the product photo into the cart icon first
   const fly = (window as unknown as { noireFly?: (img: HTMLImageElement) => Promise<void> }).noireFly;
-  const img = document.querySelector<HTMLImageElement>("[data-main-img]");
-  if (fly && img) fly(img).then(openCart);
-  else openCart();
+  const scope = btn.closest("[data-fly-scope]");
+  const img = scope?.querySelector<HTMLImageElement>("[data-fly-img]") ?? document.querySelector<HTMLImageElement>("[data-main-img]");
+  const flight = fly && img ? fly(img) : Promise.resolve();
+  // Quick view: close the dialog so the photo can be seen flying to the cart
+  btn.closest("dialog")?.close();
+  flight.then(openCart);
 });
+
+/* ---------- Quick view ---------- */
+
+const qv = document.getElementById("quick-view") as HTMLDialogElement | null;
+if (qv) {
+  const q = <T extends HTMLElement = HTMLElement>(sel: string) => qv.querySelector<T>(sel)!;
+  const eurLong = (n: number) => `${n.toLocaleString("en-US")} EUR`;
+  const swapImage = (img: HTMLImageElement, src: string) => {
+    const swap = (window as unknown as { noireSwap?: (img: HTMLImageElement, src: string) => void }).noireSwap;
+    if (swap) swap(img, src);
+    else img.src = src;
+  };
+
+  const fill = (slug: string) => {
+    const p = getCatalog()[slug];
+    if (!p) return false;
+    const img = q<HTMLImageElement>("[data-qv-img]");
+    img.src = p.image;
+    img.alt = p.name;
+    q("[data-qv-name]").textContent = p.name;
+    q("[data-qv-price]").textContent = eurLong(p.price);
+    q("[data-qv-text]").textContent = p.text;
+    q("[data-qv-add]").dataset.addToCart = slug;
+    q<HTMLAnchorElement>("[data-qv-link]").href = `/product/${slug}/`;
+    const start = Math.min(2, p.variants.length - 1);
+    q("[data-qv-glow]").style.color = p.variants[start]?.tint ?? "";
+    q("[data-qv-colors]").hidden = p.variants.length === 0;
+    q("[data-qv-color-name]").textContent = p.variants[start]?.name ?? "";
+    q("[data-qv-swatches]").innerHTML = p.variants
+      .map(
+        (v, i) =>
+          `<label><input type="radio" name="qv-color" value="${esc(v.name)}" data-img="${v.image}" data-tint="${v.tint}" ${i === start ? "checked" : ""} /><img src="${v.image}" alt="${esc(v.name)}" /></label>`,
+      )
+      .join("");
+    return true;
+  };
+
+  document.addEventListener("click", (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLElement>("[data-quick]");
+    if (!btn || !fill(btn.dataset.quick!)) return;
+    e.preventDefault();
+    qv.showModal();
+    document.dispatchEvent(new CustomEvent("noire:qv-open"));
+  });
+
+  qv.addEventListener("change", (e) => {
+    const input = e.target as HTMLInputElement;
+    if (input.name !== "qv-color") return;
+    q("[data-qv-color-name]").textContent = input.value;
+    q("[data-qv-glow]").style.color = input.dataset.tint!;
+    swapImage(q<HTMLImageElement>("[data-qv-img]"), input.dataset.img!);
+  });
+
+  q("[data-qv-close]").addEventListener("click", () => qv.close());
+  // A click on the backdrop (outside the panel) closes the dialog
+  qv.addEventListener("click", (e) => {
+    if (e.target === qv) qv.close();
+  });
+}
+
+/* ---------- Scroll progress bar ---------- */
+
+const progress = document.querySelector<HTMLElement>("[data-progress]");
+if (progress) {
+  let ticking = false;
+  const update = () => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    progress.style.transform = `scaleX(${max > 0 ? Math.min(1, scrollY / max) : 0})`;
+    ticking = false;
+  };
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    },
+    { passive: true },
+  );
+  window.addEventListener("resize", update);
+  update();
+}
 
 /* ---------- Wishlist hearts ---------- */
 

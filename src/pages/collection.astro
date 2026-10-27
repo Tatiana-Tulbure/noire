@@ -143,6 +143,8 @@ const PAGE = 8;
   }
 
   function apply() {
+    // motion.ts animates the rearrangement (GSAP Flip) between these two events
+    document.dispatchEvent(new CustomEvent("noire:filter-before"));
     let lo = Number(minEl.value);
     let hi = Number(maxEl.value);
     if (lo > hi) [lo, hi] = [hi, lo];
@@ -173,6 +175,7 @@ const PAGE = 8;
     more.hidden = matches.length <= limit;
     empty.hidden = matches.length > 0;
     status.textContent = `${matches.length} products`;
+    document.dispatchEvent(new CustomEvent("noire:filter-after"));
   }
 
   form.addEventListener("input", () => {

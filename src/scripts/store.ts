@@ -5,6 +5,8 @@ export interface CatalogEntry {
   name: string;
   price: number;
   image: string;
+  text: string;
+  variants: { name: string; image: string; tint: string }[];
 }
 
 export interface CartLine {

@@ -4,8 +4,9 @@
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
+import { Flip } from "gsap/Flip";
 
-gsap.registerPlugin(ScrollTrigger, SplitText);
+gsap.registerPlugin(ScrollTrigger, SplitText, Flip);
 
 const root = document.documentElement;
 const enabled = root.classList.contains("motion");
@@ -39,6 +40,7 @@ function init() {
     cards();
     parallax();
     footerWordmark();
+    filterFlip();
     ScrollTrigger.refresh();
     sweep();
     window.addEventListener("scroll", () => requestAnimationFrame(sweep), { passive: true });
@@ -121,7 +123,7 @@ function heroIn(delay: number) {
 
 function headings() {
   $(".title-xl, .title-lg, .col-hero__title").forEach((el) => {
-    if (el.closest(".hero")) return;
+    if (el.closest(".hero, dialog") || !el.textContent?.trim()) return;
     const split = SplitText.create(el, { type: "lines,words", mask: "lines" });
     const t = gsap.from(split.words, {
       yPercent: 110,
@@ -186,6 +188,33 @@ function balanceScene() {
   ScrollTrigger.create({ trigger: section, start: "top 40%", end: "max", once: true, onEnter: () => after.play() });
   watch(section, () => {
     if (after.progress() === 0) after.play();
+  });
+}
+
+/* Collection: filters/search/"More results" rearrange the grid fluidly (GSAP Flip).
+   collection.astro fires noire:filter-before / noire:filter-after around each update. */
+function filterFlip() {
+  const grid = document.querySelector<HTMLElement>("[data-results]");
+  if (!grid) return;
+  const items = () => $("[data-product]", grid);
+  let state: Flip.FlipState | null = null;
+  document.addEventListener("noire:filter-before", () => {
+    state = Flip.getState(items().filter((li) => !li.hidden));
+  });
+  document.addEventListener("noire:filter-after", () => {
+    if (!state) return;
+    const shown = items().filter((li) => !li.hidden);
+    // cards that just appeared skip the scroll reveal and fade in with the move
+    shown.forEach((li) => gsap.set(li.querySelector(".card"), { autoAlpha: 1, y: 0 }));
+    Flip.from(state, {
+      targets: shown,
+      duration: 0.75,
+      ease: "power3.inOut",
+      stagger: 0.02,
+      onEnter: (els) => gsap.fromTo(els, { autoAlpha: 0, scale: 0.94 }, { autoAlpha: 1, scale: 1, duration: 0.6, ease: "power3.out", delay: 0.15 }),
+      onComplete: () => ScrollTrigger.refresh(),
+    });
+    state = null;
   });
 }
 
@@ -299,6 +328,34 @@ function desktopOnly() {
     window.addEventListener("mousemove", move);
     return () => window.removeEventListener("mousemove", move);
   });
+
+  // Studio light: a soft spotlight follows the pointer over the hero chair
+  mm.add("(min-width: 992px) and (pointer: fine)", () => {
+    const media = document.querySelector<HTMLElement>(".hero__media");
+    if (!media) return;
+    const light = document.createElement("div");
+    light.className = "hero__light";
+    light.setAttribute("aria-hidden", "true");
+    media.appendChild(light);
+    const lx = gsap.quickTo(light, "x", { duration: 0.9, ease: "power3.out" });
+    const ly = gsap.quickTo(light, "y", { duration: 0.9, ease: "power3.out" });
+    const move = (e: MouseEvent) => {
+      const r = media.getBoundingClientRect();
+      lx(e.clientX - r.left);
+      ly(e.clientY - r.top);
+    };
+    const enter = () => gsap.to(light, { autoAlpha: 1, duration: 0.8 });
+    const leave = () => gsap.to(light, { autoAlpha: 0, duration: 0.8 });
+    media.addEventListener("mousemove", move);
+    media.addEventListener("mouseenter", enter);
+    media.addEventListener("mouseleave", leave);
+    return () => {
+      media.removeEventListener("mousemove", move);
+      media.removeEventListener("mouseenter", enter);
+      media.removeEventListener("mouseleave", leave);
+      light.remove();
+    };
+  });
 }
 
 /* ---------- 5. Micro-interactions ---------- */
@@ -390,6 +447,31 @@ function microInteractions() {
         })
         .fromTo(target, { scale: 1.35 }, { scale: 1, duration: 0.5, ease: "power3.out" }, "-=0.15");
     });
+
+  // Colour variants (product page + quick view): soft crossfade instead of a hard swap
+  (window as unknown as { noireSwap?: (img: HTMLImageElement, src: string) => void }).noireSwap = (img, src) => {
+    gsap.to(img, {
+      autoAlpha: 0,
+      scale: 0.96,
+      duration: 0.3,
+      ease: "power2.in",
+      overwrite: true,
+      onComplete: () => {
+        img.src = src;
+        img
+          .decode()
+          .catch(() => {})
+          .then(() => gsap.to(img, { autoAlpha: 1, scale: 1, duration: 0.7, ease: "power3.out" }));
+      },
+    });
+  };
+
+  // Quick view panel: photo and copy glide in
+  document.addEventListener("noire:qv-open", () => {
+    gsap.fromTo(".qv__panel", { y: 30, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.7, ease: "power3.out" });
+    gsap.fromTo(".qv__img", { scale: 1.08 }, { scale: 1, duration: 1.2, ease: "expo.out" });
+    gsap.fromTo(".qv__info > *", { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.6, stagger: 0.06, delay: 0.15, ease: "power3.out" });
+  });
 
   // Cart drawer: panel slides in, lines stagger
   document.addEventListener("noire:cart-open", () => {
