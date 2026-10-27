@@ -19,10 +19,19 @@ const WISH_KEY = "noire:wishlist";
 const ORDER_KEY = "noire:last-order";
 export const CHANGE_EVENT = "noire:change";
 
+// Renamed products: carts/wishlists saved before the rename keep their items
+const RENAMED: Record<string, string> = {
+  "luca-chairs": "luca-lounge-chair",
+  "luca-chairs-rose": "luca-dining-chair",
+  "pheaby-chairs": "pheaby-pedestal-chair",
+  "pheaby-chairs-walnut": "pheaby-walnut-lounge-chair",
+};
+
 function read<T>(key: string, fallback: T): T {
   try {
     const raw = localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : fallback;
+    if (!raw) return fallback;
+    return JSON.parse(raw.replace(/"(luca-chairs-rose|luca-chairs|pheaby-chairs-walnut|pheaby-chairs)"/g, (_m, s: string) => `"${RENAMED[s]}"`)) as T;
   } catch {
     return fallback;
   }

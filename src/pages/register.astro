@@ -13,7 +13,9 @@ import Icon from "../components/Icon.astro";
       <div class="register__fields">
         <Field label="First name" name="first-name" placeholder="Enter your first name" autocomplete="given-name" required />
         <Field label="Last name" name="last-name" placeholder="Enter your last name" autocomplete="family-name" required />
-        <Field label="Email address" name="email" type="email" placeholder="Enter your email address" autocomplete="email" required hint={CONCEPT_NOTE} />
+        <Field label="Email address" name="email" type="email" placeholder="Enter your email address" autocomplete="email" required hint={CONCEPT_NOTE} invalidMessage="Please enter a valid email address." />
+        <Field label="Password" name="password" type="password" placeholder="Create a password" autocomplete="new-password" required reveal minlength={8} hint="At least 8 characters. Demo only — passwords are not stored." invalidMessage="Use at least 8 characters." />
+        <Field label="Confirm password" name="password-confirm" type="password" placeholder="Repeat your password" autocomplete="new-password" required reveal match="f-password" invalidMessage="Passwords don't match." />
       </div>
       <label class="check register__terms">
         <input type="checkbox" name="terms" required />

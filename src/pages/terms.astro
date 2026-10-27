@@ -17,8 +17,16 @@ const blocks: LegalBlock[] = [
   { title: "5. Orders", body: ["After placing an order, you will receive an email confirming that we have received your request.", "This confirmation does not constitute acceptance of your order.", "NOIRÉ reserves the right to refuse or cancel any order due to:", ["Product availability", "Payment issues", "Suspected fraud", "Pricing or technical errors"]] },
   { title: "6. Payment", body: ["Payments are securely processed through trusted third-party payment providers.", "NOIRÉ never stores complete payment card information.", "Accepted payment methods are displayed during checkout."] },
   { title: "7. Shipping & Delivery", body: delays },
-  // Figma repeats the shipping copy under "Returns & Refunds"; kept as designed
-  { title: "8. Returns & Refunds", body: delays },
+  {
+    title: "8. Returns & Refunds",
+    body: [
+      "You may return eligible items within 30 days of receiving your order.",
+      "To qualify for a return, items must be:",
+      ["Unused and in their original condition.", "Returned with all original packaging and accessories.", "Accompanied by proof of purchase."],
+      "Made-to-order and personalized products cannot be returned unless they are damaged or defective.",
+      "Approved refunds are issued to your original payment method within 5–10 business days.",
+    ],
+  },
   { title: "9. Warranty", body: ["Our products are covered by applicable statutory warranties.", "The warranty does not cover:", ["Normal wear and tear", "Improper use", "Incorrect assembly", "Accidental damage", "Unauthorized repairs"]] },
   { title: "10. User Accounts", body: ["When creating an account, you agree to:", ["Keep your password secure.", "Maintain accurate account information.", "Accept responsibility for all activities under your account."], "NOIRÉ reserves the right to suspend or terminate accounts that violate these Terms."] },
   { title: "11. Limitation of Liability", body: ["To the maximum extent permitted by law, NOIRÉ shall not be liable for:", ["Indirect damages", "Incidental damages", "Consequential losses", "Loss of profits", "Business interruption"], "Our total liability shall never exceed the value of the purchased products."] },

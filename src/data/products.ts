@@ -49,7 +49,7 @@ export const products: Product[] = [
     description: "A soft, enveloping armchair wrapped in ivory bouclé. Its rounded silhouette brings a calm, sculptural presence to any living space.",
   },
   {
-    slug: "luca-chairs", name: "Luca Chairs", price: 2850, image: "product-luca-chairs",
+    slug: "luca-lounge-chair", name: "Luca Lounge Chair", price: 2850, image: "product-luca-chairs",
     category: "Lounge chairs", group: "seating", rooms: ["Living room"], colors: ["Beige", "Pink"], materials: ["Cotton"],
     description: "Generous curves and a low, welcoming seat in a warm peach bouclé — a statement lounge chair made for slow evenings.",
   },
@@ -69,7 +69,7 @@ export const products: Product[] = [
     description: "A playful velvet pouf with a soft backrest — an accent piece that adds color and comfort.",
   },
   {
-    slug: "pheaby-chairs", name: "Pheaby Chairs", price: 3250, image: "product-pheaby-chairs",
+    slug: "pheaby-pedestal-chair", name: "Pheaby Pedestal Chair", price: 3250, image: "product-pheaby-chairs",
     category: "Lounge chairs", group: "seating", rooms: ["Living room"], colors: ["Beige", "Ivory"], materials: ["Cotton"],
     description: "A sculpted bouclé lounge chair on a pedestal base, balancing a cocooning back with a light, modern profile.",
   },
@@ -79,7 +79,7 @@ export const products: Product[] = [
     description: "A turned solid-wood side table with a round top and sculptural column, finished by hand.",
   },
   {
-    slug: "pheaby-chairs-walnut", name: "Pheaby Chairs", price: 1890, image: "product-pheaby-chairs-walnut",
+    slug: "pheaby-walnut-lounge-chair", name: "Pheaby Walnut Lounge Chair", price: 1890, image: "product-pheaby-chairs-walnut",
     category: "Lounge chairs", group: "seating", rooms: ["Living room", "Home office"], colors: ["Beige"], materials: ["Cotton", "Walnut"],
     description: "A deep lounge seat in natural bouclé resting on a curved walnut sled base.",
   },
@@ -109,7 +109,7 @@ export const products: Product[] = [
     description: FAT_DESCRIPTION,
   },
   {
-    slug: "luca-chairs-rose", name: "Luca Chairs", price: 850, image: "product-luca-chairs-rose",
+    slug: "luca-dining-chair", name: "Luca Dining Chair", price: 850, image: "product-luca-chairs-rose",
     category: "Armchairs", group: "seating", rooms: ["Dining room"], colors: ["Pink"], materials: ["Cotton"],
     description: "An open-back chair in rose bouclé with a solid, sculpted base.",
   },
@@ -182,17 +182,17 @@ export const bySlug = (slug: string): Product => {
 };
 
 /** Home sections, in Figma order */
-export const newArrivals = ["cloud-boucle-armchair", "luca-chairs", "navy-velvet-dining-chair", "blush-curve-sofa", "bloom-pouf"].map(bySlug);
-export const homeTeaser = ["pheaby-chairs", "rows-table", "pheaby-chairs-walnut"].map(bySlug);
+export const newArrivals = ["cloud-boucle-armchair", "luca-lounge-chair", "navy-velvet-dining-chair", "blush-curve-sofa", "bloom-pouf"].map(bySlug);
+export const homeTeaser = ["pheaby-pedestal-chair", "rows-table", "pheaby-walnut-lounge-chair"].map(bySlug);
 export const sales = ["getluky-chair", "roc-keyvisual-chair", "swivel-accent-chair", "orbit-swivel-chair", "emerald-shell-armchair"].map(bySlug);
-export const alsoLike = ["fat-2-5-seater", "fat-work-chair", "luca-chairs-rose", "luna-swivel-chair", "riva-lounge-chair"].map(bySlug);
+export const alsoLike = ["fat-2-5-seater", "fat-work-chair", "luca-dining-chair", "luna-swivel-chair", "riva-lounge-chair"].map(bySlug);
 
 /** All products page order (first 8 = Figma grid, the rest appear under "More results") */
 export const collectionOrder = [
   "bubble-lounge-chair", "orbit-swivel-chair", "luna-swivel-chair", "riva-lounge-chair", "sienna-lounge-chair", "arc-dining-chair",
-  "roll-sofa", "modulo-corner-sofa", "fat-lounge-chair", "cloud-boucle-armchair", "luca-chairs", "navy-velvet-dining-chair",
-  "blush-curve-sofa", "bloom-pouf", "pheaby-chairs", "rows-table", "pheaby-chairs-walnut", "getluky-chair", "roc-keyvisual-chair",
-  "swivel-accent-chair", "fat-2-5-seater", "fat-work-chair", "luca-chairs-rose", "velvet-sculpted-armchair", "roll-mustard-chair",
+  "roll-sofa", "modulo-corner-sofa", "fat-lounge-chair", "cloud-boucle-armchair", "luca-lounge-chair", "navy-velvet-dining-chair",
+  "blush-curve-sofa", "bloom-pouf", "pheaby-pedestal-chair", "rows-table", "pheaby-walnut-lounge-chair", "getluky-chair", "roc-keyvisual-chair",
+  "swivel-accent-chair", "fat-2-5-seater", "fat-work-chair", "luca-dining-chair", "velvet-sculpted-armchair", "roll-mustard-chair",
   "emerald-shell-armchair", "olive-classic-sofa",
 ].map(bySlug);
 

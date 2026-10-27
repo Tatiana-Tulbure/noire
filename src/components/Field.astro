@@ -16,10 +16,15 @@ interface Props {
   maxlength?: number;
   /** Small helper line under the control */
   hint?: string;
+  minlength?: number;
+  /** id of another field whose value this one must repeat (confirm password) */
+  match?: string;
+  /** Message when the value is present but invalid (too short, mismatch, wrong format) */
+  invalidMessage?: string;
   class?: string;
 }
 
-const { label, name, type = "text", placeholder, autocomplete, required = false, reveal = false, options, inputmode, pattern, maxlength, hint, class: className } = Astro.props;
+const { label, name, type = "text", placeholder, autocomplete, required = false, reveal = false, options, inputmode, pattern, maxlength, hint, minlength, match, invalidMessage, class: className } = Astro.props;
 const id = `f-${name}`;
 ---
 
@@ -46,6 +51,9 @@ const id = `f-${name}`;
         inputmode={inputmode}
         pattern={pattern}
         maxlength={maxlength}
+        minlength={minlength}
+        data-match={match}
+        data-invalid={invalidMessage}
         aria-describedby={`${id}-error${hint ? ` ${id}-hint` : ""}`}
       />
     )}
