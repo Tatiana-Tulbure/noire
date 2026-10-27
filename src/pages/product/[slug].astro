@@ -28,15 +28,18 @@ const related = alsoLike.filter((p) => p.slug !== product.slug).slice(0, 5);
 const info = [
   {
     title: "materials",
-    body: `Upholstery: ${product.materials.join(", ").toLowerCase()}. Inner structure in high-resilience moulded foam over a solid frame, hand-finished in Europe.`,
+    body:
+      product.group === "tables"
+        ? `Materials: ${product.materials.join(", ").toLowerCase()}. Solid wood, turned and hand-finished in Europe.`
+        : `Materials: ${product.materials.join(", ").toLowerCase()}. Upholstered over high-resilience moulded foam on a solid frame, hand-finished in Europe.`,
   },
   {
     title: "SPECIFICATIONS",
     body: product.dimensions ?? "Dimensions and weight are available on request from our design team.",
   },
   {
-    title: "PRODUCTS CARE",
-    body: "Vacuum regularly with a soft brush attachment. Blot spills immediately with a clean, dry cloth and avoid direct sunlight to preserve the colour.",
+    title: "PRODUCT CARE",
+    body: "Vacuum regularly with a soft brush attachment. Blot spills immediately with a clean, dry cloth and avoid direct sunlight to preserve the color.",
   },
   {
     title: "Tests & certifications",

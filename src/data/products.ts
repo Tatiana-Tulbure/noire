@@ -66,7 +66,7 @@ export const products: Product[] = [
   {
     slug: "bloom-pouf", name: "Bloom Pouf", price: 490, image: "product-bloom-pouf",
     category: "Accessories", group: "accessories", rooms: ["Bedroom", "Living room"], colors: ["Pink"], materials: ["Velvet"],
-    description: "A playful velvet pouf with a soft backrest — an accent piece that adds colour and comfort.",
+    description: "A playful velvet pouf with a soft backrest — an accent piece that adds color and comfort.",
   },
   {
     slug: "pheaby-chairs", name: "Pheaby Chairs", price: 3250, image: "product-pheaby-chairs",
@@ -126,7 +126,7 @@ export const products: Product[] = [
   {
     slug: "luna-swivel-chair", name: "Luna Swivel Chair", price: 1580, image: "product-luna-swivel-chair",
     category: "Lounge chairs", group: "seating", rooms: ["Bedroom", "Living room"], colors: ["Ivory", "White"], materials: ["Cotton", "Metal"],
-    description: "Soft ivory bouclé on a polished swivel base — a cosy, cloud-like seat.",
+    description: "Soft ivory bouclé on a polished swivel base — a cozy, cloud-like seat.",
   },
   {
     slug: "riva-lounge-chair", name: "Riva Lounge Chair", price: 1940, image: "product-riva-lounge-chair",
