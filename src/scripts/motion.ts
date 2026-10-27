@@ -34,6 +34,7 @@ function init() {
     desktopOnly();
     heroIn(start);
     headings();
+    balanceScene();
     images();
     cards();
     parallax();
@@ -133,8 +134,8 @@ function headings() {
     watch(el, playOnce(t));
   });
 
-  // Layered display words (Balance + Essence) rise and fade
-  $(".balance__line, .essence__word").forEach((el) => {
+  // Layered display words (Essence) rise and fade
+  $(".essence__word").forEach((el) => {
     const t = gsap.from(el, {
       yPercent: 40,
       autoAlpha: 0,
@@ -143,6 +144,48 @@ function headings() {
       scrollTrigger: { trigger: el.closest("section")!, start: "top 75%", end: "max", once: true },
     });
     watch(el.closest("section")!, playOnce(t));
+  });
+}
+
+/* "The perfect balance": the three lines swing in from opposite sides like the arms of a scale,
+   their words rise out of masks, and everything levels out into the Figma layout. Scrubbed, so
+   the end state is exactly the static design whenever the section has been scrolled through. */
+function balanceScene() {
+  const section = document.querySelector<HTMLElement>(".balance");
+  if (!section) return;
+  const lines = $(".balance__line", section);
+  const rule = section.querySelector(".balance__rule");
+  const sides = [
+    { xPercent: -28, rotation: -6 },
+    { xPercent: 28, rotation: 6 },
+    { xPercent: -22, rotation: -4 },
+  ];
+
+  const tl = gsap.timeline({
+    scrollTrigger: { trigger: section, start: "top 90%", end: "top 30%", scrub: 1 },
+  });
+  lines.forEach((line, i) => {
+    const at = i * 0.12;
+    tl.fromTo(line, { xPercent: sides[i].xPercent, scaleX: 1.08 }, { xPercent: 0, scaleX: 1, duration: 1, ease: "power3.out" }, at)
+      // back.out gives the small overshoot of a scale settling level
+      .fromTo(line, { rotation: sides[i].rotation, transformOrigin: "50% 50%" }, { rotation: 0, duration: 1, ease: "back.out(2.4)" }, at)
+      .fromTo($(".bw__in", line), { yPercent: 110 }, { yPercent: 0, duration: 0.7, stagger: 0.08, ease: "power3.out" }, at);
+  });
+
+  // Once level: the rule draws from the centre, copy fades up line by line, the button arrives last
+  const text = section.querySelector<HTMLElement>(".balance__text");
+  const cta = section.querySelector<HTMLElement>(".balance__cta");
+  const after = gsap.timeline({ paused: true, defaults: { ease: "power3.out" } });
+  if (rule) after.fromTo(rule, { scaleX: 0 }, { scaleX: 1, duration: 1, ease: "expo.inOut" }, 0);
+  if (text) {
+    const split = SplitText.create(text, { type: "lines" });
+    after.from(split.lines, { y: 24, autoAlpha: 0, duration: 0.9, stagger: 0.1, onComplete: () => split.revert() }, 0.2);
+  }
+  if (cta) after.from(cta, { y: 24, autoAlpha: 0, duration: 0.9 }, ">-0.4");
+
+  ScrollTrigger.create({ trigger: section, start: "top 40%", end: "max", once: true, onEnter: () => after.play() });
+  watch(section, () => {
+    if (after.progress() === 0) after.play();
   });
 }
 

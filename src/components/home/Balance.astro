@@ -3,6 +3,8 @@ import { img } from "../../data/products";
 
 const bg = img("balance-bg");
 const chair = img("balance-chair");
+// Words are wrapped by hand (mask + inner span) so the GSAP "balance" animation can reveal them from below
+const words = (text: string) => text.split(" ");
 ---
 
 <!-- Figma "special_section": the chair cut-out sits above the headline, so the title reads "through" it -->
@@ -11,9 +13,15 @@ const chair = img("balance-chair");
     <div class="balance__stage">
       <img class="balance__img" src={bg.src} width={bg.width} height={bg.height} alt="" role="presentation" loading="lazy" />
       <h2 class="balance__title" id="balance-title">
-        <span class="balance__line balance__line--1">The perfect</span>
-        <span class="balance__line balance__line--2">balance of</span>
-        <span class="balance__line balance__line--3">comfort and style</span>
+        <span class="balance__line balance__line--1">
+          {words("The perfect").map((w, i) => <>{i > 0 && " "}<span class="bw"><span class="bw__in">{w}</span></span></>)}
+        </span>
+        <span class="balance__line balance__line--2">
+          <span class="balance__accent"><span class="bw"><span class="bw__in">balance</span></span><span class="balance__rule" aria-hidden="true"></span></span> <span class="bw"><span class="bw__in">of</span></span>
+        </span>
+        <span class="balance__line balance__line--3">
+          {words("comfort and style").map((w, i) => <>{i > 0 && " "}<span class="bw"><span class="bw__in">{w}</span></span></>)}
+        </span>
       </h2>
       <img class="balance__img balance__img--front" src={chair.src} width={chair.width} height={chair.height} alt="Rose upholstered chair with a round seat" loading="lazy" />
       <a class="btn btn--light balance__cta" href="/collection/"><span>Discover the collection</span></a>
@@ -27,6 +35,7 @@ const chair = img("balance-chair");
 <style>
   .balance {
     margin-top: 12.5em; /* 200px */
+    overflow-x: clip; /* lines swing in from off-canvas */
   }
 
   /* Stage = Figma frame 1407×1635; children are placed in % so the whole composition scales together */
@@ -90,6 +99,35 @@ const chair = img("balance-chair");
   .balance__line {
     position: absolute;
     white-space: nowrap;
+  }
+
+  /* Word masks for the reveal; padding keeps glyph tops/bottoms from being clipped */
+  .bw {
+    display: inline-block;
+    overflow: hidden;
+    padding: 0.1em 0.03em 0.06em;
+    margin: -0.1em -0.03em -0.06em;
+    vertical-align: top;
+  }
+
+  .bw__in {
+    display: inline-block;
+  }
+
+  .balance__accent {
+    position: relative;
+    display: inline-block;
+  }
+
+  /* Thin rose rule under "balance" — drawn from the centre by GSAP once the lines are level */
+  .balance__rule {
+    position: absolute;
+    left: 0.04em;
+    right: 0.04em;
+    bottom: 0.04em;
+    height: 0.025em;
+    background-color: var(--color-accent);
+    transform: scaleX(0);
   }
 
   .balance__line--1 {
