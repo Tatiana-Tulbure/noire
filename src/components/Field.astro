@@ -14,10 +14,12 @@ interface Props {
   inputmode?: "numeric" | "tel" | "email" | "text";
   pattern?: string;
   maxlength?: number;
+  /** Small helper line under the control */
+  hint?: string;
   class?: string;
 }
 
-const { label, name, type = "text", placeholder, autocomplete, required = false, reveal = false, options, inputmode, pattern, maxlength, class: className } = Astro.props;
+const { label, name, type = "text", placeholder, autocomplete, required = false, reveal = false, options, inputmode, pattern, maxlength, hint, class: className } = Astro.props;
 const id = `f-${name}`;
 ---
 
@@ -44,7 +46,7 @@ const id = `f-${name}`;
         inputmode={inputmode}
         pattern={pattern}
         maxlength={maxlength}
-        aria-describedby={`${id}-error`}
+        aria-describedby={`${id}-error${hint ? ` ${id}-hint` : ""}`}
       />
     )}
     {reveal && (
@@ -53,6 +55,7 @@ const id = `f-${name}`;
       </button>
     )}
   </div>
+  {hint && <p class="field__hint" id={`${id}-hint`}>{hint}</p>}
   <p class="field__error" id={`${id}-error`} hidden>This field must be completed!</p>
 </div>
 

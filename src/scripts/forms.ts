@@ -47,6 +47,10 @@ document.querySelectorAll<HTMLFormElement>("[data-demo-form]").forEach((form) =>
     e.preventDefault();
     if (!validate(form)) return;
     form.dispatchEvent(new CustomEvent("demo:valid"));
-    if (form.dataset.next) location.href = form.dataset.next;
+    // Concept project: say clearly that nothing was sent, then continue the demo flow
+    const note = form.querySelector<HTMLElement>("[data-demo-confirm]");
+    if (note) note.hidden = false;
+    const next = form.dataset.next;
+    if (next) setTimeout(() => (location.href = next), note ? 1800 : 0);
   });
 });

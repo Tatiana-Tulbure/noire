@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import AccountShell from "../../components/AccountShell.astro";
 import Field from "../../components/Field.astro";
+import { CONCEPT_NOTE, CONCEPT_CONFIRM } from "../../data/concept";
 ---
 
 <BaseLayout title="My account — NOIRÉ" description="Manage your NOIRÉ account details.">
@@ -10,23 +11,19 @@ import Field from "../../components/Field.astro";
       <div class="profile__grid">
         <Field label="Name" name="name" placeholder="Enter your name" autocomplete="given-name" />
         <Field label="Surname" name="surname" placeholder="Enter your surname" autocomplete="family-name" />
-        <Field label="Email address" name="email" type="email" placeholder="Enter your email" autocomplete="email" />
+        <Field label="Email address" name="email" type="email" placeholder="Enter your email" autocomplete="email" hint={CONCEPT_NOTE} />
         <Field label="Password" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" />
         <Field label="Phone number" name="phone" type="tel" placeholder="Enter your phone number" autocomplete="tel" />
         <Field label="New password" name="new-password" type="password" placeholder="Enter your new password" autocomplete="new-password" />
       </div>
       <button class="btn btn--light profile__save" type="submit"><span>SAVE</span></button>
-      <p class="profile__saved text-body" role="status" hidden>Your details have been saved.</p>
+      <p class="demo-confirm profile__saved" role="status" data-demo-confirm hidden>{CONCEPT_CONFIRM}</p>
     </form>
   </AccountShell>
 </BaseLayout>
 
 <script>
   import "../../scripts/forms.ts";
-  const form = document.querySelector<HTMLFormElement>(".profile");
-  form?.addEventListener("demo:valid", () => {
-    form.querySelector<HTMLElement>(".profile__saved")!.hidden = false;
-  });
 </script>
 
 <style>
@@ -49,7 +46,6 @@ import Field from "../../components/Field.astro";
 
   .profile__saved {
     margin-top: -1.5em;
-    color: var(--color-accent);
   }
 
   @media (max-width: 767px) {

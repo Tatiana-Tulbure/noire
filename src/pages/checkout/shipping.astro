@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CheckoutShell from "../../components/CheckoutShell.astro";
 import Field from "../../components/Field.astro";
+import { CONCEPT_NOTE } from "../../data/concept";
 import Icon from "../../components/Icon.astro";
 
 const countries = ["Switzerland", "Germany", "France", "Italy", "Austria", "Romania", "Moldova", "United Kingdom", "United States"];
@@ -22,7 +23,7 @@ const countries = ["Switzerland", "Germany", "France", "Italy", "Austria", "Roma
       <div class="ship__fields">
         <Field label="Name" name="name" autocomplete="given-name" required />
         <Field label="Surname" name="surname" autocomplete="family-name" required />
-        <Field label="Email" name="email" type="email" autocomplete="email" required />
+        <Field label="Email" name="email" type="email" autocomplete="email" required hint={CONCEPT_NOTE} />
         <Field label="Phone number" name="phone" type="tel" autocomplete="tel" required />
         <Field label="Country" name="country" options={countries} autocomplete="country-name" required />
         <Field label="City" name="city" autocomplete="address-level2" required />

@@ -31,18 +31,41 @@ function init() {
 
   document.fonts.ready.then(() => {
     const start = intro ? intro.duration() - 0.55 : 0.1;
+    desktopOnly();
     heroIn(start);
     headings();
     images();
     cards();
     parallax();
     footerWordmark();
-    desktopOnly();
     ScrollTrigger.refresh();
+    sweep();
+    window.addEventListener("scroll", () => requestAnimationFrame(sweep), { passive: true });
+    window.addEventListener("load", sweep);
   });
 
   microInteractions();
 }
+
+/* ---------- Safety net ----------
+   Each reveal is registered here too. Anything whose top is inside (or above) the viewport
+   but hasn't played yet — e.g. after a fast scroll or a reload mid-page — is played now. */
+
+const pending = new Set<{ el: Element; play: () => void }>();
+const watch = (el: Element, play: () => void) => pending.add({ el, play });
+
+function sweep() {
+  for (const item of pending) {
+    if (item.el.getBoundingClientRect().top < innerHeight * 0.95) {
+      item.play();
+      pending.delete(item);
+    }
+  }
+}
+
+const playOnce = (t: gsap.core.Tween) => () => {
+  if (t.progress() === 0 && !t.isActive()) t.play();
+};
 
 /* ---------- 1. Intro: NOIRÉ letters rise, then the curtain lifts (once per session) ---------- */
 
@@ -91,38 +114,42 @@ function heroIn(delay: number) {
   });
 }
 
-/* ---------- 3. Scroll reveals ---------- */
+/* ---------- 3. Scroll reveals ----------
+   Every reveal uses end: "max": once its start has passed the trigger stays active, so
+   content above the viewport (fast scroll, reload mid-page) still ends up visible. */
 
 function headings() {
   $(".title-xl, .title-lg, .col-hero__title").forEach((el) => {
     if (el.closest(".hero")) return;
     const split = SplitText.create(el, { type: "lines,words", mask: "lines" });
-    gsap.from(split.words, {
+    const t = gsap.from(split.words, {
       yPercent: 110,
       duration: 1.3,
       stagger: 0.06,
       ease: EASE,
-      scrollTrigger: { trigger: el, start: "top 88%", once: true },
+      scrollTrigger: { trigger: el, start: "top 88%", end: "max", once: true },
       onComplete: () => split.revert(),
     });
+    watch(el, playOnce(t));
   });
 
   // Layered display words (Balance + Essence) rise and fade
   $(".balance__line, .essence__word").forEach((el) => {
-    gsap.from(el, {
+    const t = gsap.from(el, {
       yPercent: 40,
       autoAlpha: 0,
       duration: 1.6,
       ease: EASE,
-      scrollTrigger: { trigger: el.closest("section")!, start: "top 75%", once: true },
+      scrollTrigger: { trigger: el.closest("section")!, start: "top 75%", end: "max", once: true },
     });
+    watch(el.closest("section")!, playOnce(t));
   });
 }
 
 function images() {
   // Clip-path wipe, bottom → top
   $(".col-hero__img, .auth__photo, .pdp__stage, .pdp__thumb, .balance__stage, .order__img, .nf__art").forEach((el, i) => {
-    gsap.fromTo(
+    const t = gsap.fromTo(
       el,
       { clipPath: "inset(100% 0% 0% 0%)" },
       {
@@ -130,10 +157,11 @@ function images() {
         duration: 1.6,
         ease: "expo.inOut",
         delay: el.classList.contains("pdp__thumb") ? 0.1 * (i % 3) : 0,
-        scrollTrigger: { trigger: el, start: "top 90%", once: true },
+        scrollTrigger: { trigger: el, start: "top 90%", end: "max", once: true },
         clearProps: "clipPath",
       },
     );
+    watch(el, playOnce(t));
   });
 }
 
@@ -141,9 +169,15 @@ function cards() {
   if (!document.querySelector(".card, .teaser__more")) return;
   ScrollTrigger.batch(".card, .teaser__more", {
     start: "top 95%",
+    end: "max",
     once: true,
     onEnter: (batch) => gsap.to(batch, { autoAlpha: 1, y: 0, duration: 1.1, stagger: 0.09, ease: "power3.out", overwrite: "auto" }),
   });
+  $(".card, .teaser__more").forEach((card) =>
+    watch(card, () => {
+      if (+getComputedStyle(card).opacity < 1) gsap.to(card, { autoAlpha: 1, y: 0, duration: 1.1, ease: "power3.out", overwrite: "auto" });
+    }),
+  );
   // Cards that appear later (filters, "More results", wishlist) need fresh trigger positions
   document.addEventListener("noire:change", () => ScrollTrigger.refresh());
   document.querySelector("[data-filters]")?.addEventListener("input", () => requestAnimationFrame(() => ScrollTrigger.refresh()));
@@ -155,7 +189,8 @@ function parallax() {
     if (!document.querySelector(target)) return;
     gsap.fromTo(target, { yPercent: from }, { yPercent: to, ease: "none", scrollTrigger: { trigger, start: "top bottom", end: "bottom top", scrub: true } });
   };
-  scrub(".balance__img--front", ".balance", 6, -6);
+  // Both balance layers move together: the cut-out chair must stay aligned with the photo under it
+  scrub(".balance__img", ".balance", 4, -4);
   scrub(".essence__chair--white", ".essence", 10, -10);
   scrub(".essence__chair--pink", ".essence", -4, 6);
 }

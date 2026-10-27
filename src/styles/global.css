@@ -483,3 +483,20 @@ p {
 [hidden] {
   display: none !important;
 }
+
+/* Concept-project notices (email fields, demo confirmations, footer) */
+.field__hint,
+.demo-note {
+  font-size: 0.875em;
+  line-height: 1.357;
+  letter-spacing: -0.28px;
+  color: var(--color-muted);
+}
+
+.demo-confirm {
+  padding: 1em 1.25em;
+  border: 1px solid var(--color-accent);
+  font-size: 1em;
+  line-height: 1.375;
+  color: var(--color-white);
+}

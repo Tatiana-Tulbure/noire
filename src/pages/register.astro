@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import AuthShell from "../components/AuthShell.astro";
 import Field from "../components/Field.astro";
+import { CONCEPT_NOTE, CONCEPT_CONFIRM } from "../data/concept";
 import Icon from "../components/Icon.astro";
 ---
 
@@ -12,7 +13,7 @@ import Icon from "../components/Icon.astro";
       <div class="register__fields">
         <Field label="First name" name="first-name" placeholder="Enter your first name" autocomplete="given-name" required />
         <Field label="Last name" name="last-name" placeholder="Enter your last name" autocomplete="family-name" required />
-        <Field label="Email address" name="email" type="email" placeholder="Enter your email address" autocomplete="email" required />
+        <Field label="Email address" name="email" type="email" placeholder="Enter your email address" autocomplete="email" required hint={CONCEPT_NOTE} />
       </div>
       <label class="check register__terms">
         <input type="checkbox" name="terms" required />
@@ -23,6 +24,7 @@ import Icon from "../components/Icon.astro";
         <span class="check__text">I agree to the <a href="/terms/">Terms &amp; Privacy Policy</a></span>
       </label>
       <button class="btn btn--light" type="submit"><span>Create account</span></button>
+      <p class="demo-confirm" role="status" data-demo-confirm hidden>{CONCEPT_CONFIRM}</p>
     </form>
   </AuthShell>
 </BaseLayout>

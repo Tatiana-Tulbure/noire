@@ -1,5 +1,6 @@
 ---
 import Icon from "./Icon.astro";
+import { CONCEPT_NOTE, CONCEPT_CONFIRM, CONCEPT_BADGE } from "../data/concept";
 
 const columns = [
   {
@@ -59,10 +60,11 @@ const socials = [
         </div>
         <div class="footer__subscribe">
           <label class="sr-only" for="newsletter-email">Email</label>
-          <input id="newsletter-email" type="email" name="email" placeholder="Email" required autocomplete="email" />
+          <input id="newsletter-email" type="email" name="email" placeholder="Email" required autocomplete="email" aria-describedby="newsletter-note" />
           <button type="submit"><span>Subscribe</span></button>
         </div>
-        <p class="footer__thanks" role="status" hidden>Thank you — you're on the list.</p>
+        <p class="demo-note footer__note" id="newsletter-note">{CONCEPT_NOTE}</p>
+        <p class="demo-confirm footer__thanks" role="status" hidden>{CONCEPT_CONFIRM}</p>
       </form>
 
       <div class="footer__columns">
@@ -98,6 +100,7 @@ const socials = [
           </li>
         ))}
       </ul>
+      <p class="footer__concept">{CONCEPT_BADGE}</p>
       <p class="footer__copy">©2026. NOIRE. All rights are reserved</p>
     </div>
   </div>
@@ -202,9 +205,16 @@ const socials = [
     border-color: var(--color-white);
   }
 
-  .footer__thanks {
-    font-size: 1em;
-    color: var(--color-accent);
+  .footer__note {
+    margin-top: -1.25em; /* sits close under the field */
+  }
+
+  .footer__concept {
+    font-size: 0.875em;
+    line-height: 1.357;
+    letter-spacing: 1.12px;
+    text-transform: uppercase;
+    color: var(--color-muted);
   }
 
   .footer__columns {

@@ -103,10 +103,15 @@ const em = (px: number) => `${px / 16}em`;
     height: 93.625em;
   }
 
+  /* The photo has its own studio backdrop: feather its left, top and bottom edges into the page colour */
   .hero__img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 26%), linear-gradient(to bottom, transparent 0%, #000 7%, #000 84%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to right, transparent 0%, #000 26%), linear-gradient(to bottom, transparent 0%, #000 7%, #000 84%, transparent 100%);
+    mask-composite: intersect;
   }
 
   .spot {
