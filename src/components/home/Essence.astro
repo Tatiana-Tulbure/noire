@@ -146,46 +146,88 @@ const pink = img("essence-pink-chair");
     }
   }
 
-  @media (max-width: 479px) {
+  /* Phones: the layered art-direction becomes a stacked composition —
+     copy, NOIRÉ / ESSENCE, the two chairs overlapping, then the button */
+  @media (max-width: 767px) {
+    .essence {
+      padding-block: 3em 3.5em;
+    }
+
     .essence__stage {
-      aspect-ratio: 360 / 820;
-      font-size: calc(100vw / 75);
+      display: grid;
+      grid-template-areas: "text" "noire" "essence" "chairs" "cta";
+      width: 100%;
+      aspect-ratio: auto;
+      padding-inline: var(--container-padding);
+      font-size: var(--size-font);
+    }
+
+    .essence__word,
+    .essence__text,
+    .essence__cta,
+    .essence__chair {
+      position: static;
+      width: auto;
+      height: auto;
+    }
+
+    .essence__word {
+      font-size: min(19vw, 5.5rem);
+      line-height: 0.9;
+      letter-spacing: -1.28px;
     }
 
     .essence__word--design {
-      left: 18%;
-      top: 32%;
-      color: #1e1e1e;
+      display: none;
     }
 
     .essence__word--noire {
-      left: var(--container-padding);
-      top: 28%;
-      width: auto;
+      grid-area: noire;
+      margin-top: 0.4em;
+      text-align: left;
     }
 
     .essence__word--essence {
-      top: 39%;
+      grid-area: essence;
+      line-height: 1;
     }
 
     .essence__text {
-      width: 60%;
+      grid-area: text;
+      width: 85%;
+      font-size: 0.875em;
+      line-height: 1.357;
+      letter-spacing: -0.28px;
     }
 
+    .essence__chair {
+      grid-area: chairs;
+      max-width: 100%;
+    }
+
+    /* grey chair bleeds off the right edge on purpose, fading out */
     .essence__chair--white {
-      left: 55%;
-      top: 15%;
-      width: 90%;
-      height: auto;
+      justify-self: end;
+      align-self: start;
+      width: 74%;
+      margin-right: calc(var(--container-padding) * -1 - 14%);
       aspect-ratio: 1;
+      -webkit-mask-image: linear-gradient(to right, #000 60%, transparent 100%);
+      mask-image: linear-gradient(to right, #000 60%, transparent 100%);
     }
 
     .essence__chair--pink {
-      left: 8%;
-      top: 34%;
+      position: relative;
+      z-index: 1;
+      justify-self: center;
       width: 80%;
-      height: auto;
+      margin-top: 30%;
       aspect-ratio: 1640 / 1595;
+    }
+
+    .essence__cta {
+      grid-area: cta;
+      margin-top: 1.5em;
     }
   }
 </style>

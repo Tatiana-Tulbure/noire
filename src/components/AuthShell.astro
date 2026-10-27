@@ -23,8 +23,9 @@ const room = img("login-room");
     <div class="auth__social">
       <p class="auth__or">OR</p>
       <div class="auth__social-btns">
-        <a class="btn btn--ghost auth__soc" href="/account/"><Icon name="social-instagram" /><span>Sign in with Instagram</span></a>
-        <a class="btn btn--ghost auth__soc" href="/account/"><Icon name="social-facebook" /><span>Sign in with Facebook</span></a>
+        <!-- Concept project: social sign-in is shown as in the design but is not interactive -->
+        <span class="btn btn--ghost auth__soc" aria-disabled="true"><Icon name="social-instagram" /><span>Sign in with Instagram</span></span>
+        <span class="btn btn--ghost auth__soc" aria-disabled="true"><Icon name="social-facebook" /><span>Sign in with Facebook</span></span>
       </div>
     </div>
   </div>
@@ -98,6 +99,11 @@ const room = img("login-room");
     gap: 0.5em;
     padding-inline: 1em;
     color: var(--color-text);
+    cursor: default;
+  }
+
+  .auth__soc:hover {
+    border-color: var(--color-border);
   }
 
   .auth__soc span {

@@ -37,10 +37,11 @@ const columns = [
 ];
 
 const socials = [
-  { name: "facebook", label: "Facebook", href: "https://www.facebook.com/" },
-  { name: "twitter", label: "Twitter", href: "https://twitter.com/" },
-  { name: "youtube", label: "YouTube", href: "https://www.youtube.com/" },
-  { name: "instagram", label: "Instagram", href: "https://www.instagram.com/" },
+  // Concept project: the icons are part of the design but deliberately not links
+  { name: "facebook" },
+  { name: "twitter" },
+  { name: "youtube" },
+  { name: "instagram" },
 ];
 ---
 
@@ -91,17 +92,14 @@ const socials = [
     </div>
 
     <div class="footer__bottom">
-      <ul class="footer__socials">
+      <ul class="footer__socials" aria-hidden="true">
         {socials.map((s) => (
           <li>
-            <a href={s.href} target="_blank" rel="noopener" aria-label={s.label}>
-              <Icon name={s.name} />
-            </a>
+            <span class="footer__social"><Icon name={s.name} /></span>
           </li>
         ))}
       </ul>
       <p class="footer__concept">{CONCEPT_BADGE}</p>
-      <p class="footer__copy">©2026. NOIRE. All rights are reserved</p>
     </div>
   </div>
 </footer>
@@ -262,23 +260,11 @@ const socials = [
     gap: 2.25em; /* 36px */
   }
 
-  .footer__socials a {
+  .footer__social {
     display: block;
-    transition: opacity var(--transition-fast);
+    cursor: default;
   }
 
-  .footer__socials a:hover {
-    opacity: 0.8;
-  }
-
-  .footer__copy {
-    width: 17.6875em;
-    font-size: 1em;
-    font-weight: 500;
-    line-height: 1.375;
-    letter-spacing: -0.32px;
-    color: var(--color-text);
-  }
 
   @media (max-width: 991px) {
     .footer {
@@ -304,9 +290,6 @@ const socials = [
       row-gap: 2.5em;
     }
 
-    .footer__copy {
-      width: auto;
-    }
   }
 
   @media (max-width: 767px) {
@@ -325,11 +308,9 @@ const socials = [
       height: 1.875em;
     }
 
-    .footer__socials a {
+    .footer__social {
       display: grid;
       place-items: center;
-      min-width: 2.75em;
-      min-height: 2.75em;
     }
   }
 

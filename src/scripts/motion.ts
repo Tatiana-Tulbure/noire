@@ -261,10 +261,13 @@ function parallax() {
     if (!document.querySelector(target)) return;
     gsap.fromTo(target, { yPercent: from }, { yPercent: to, ease: "none", scrollTrigger: { trigger, start: "top bottom", end: "bottom top", scrub: true } });
   };
-  // Both balance layers move together: the cut-out chair must stay aligned with the photo under it
-  scrub(".balance__img", ".balance", 4, -4);
-  scrub(".essence__chair--white", ".essence", 10, -10);
-  scrub(".essence__chair--pink", ".essence", -4, 6);
+  // Parallax only where the layered desktop/tablet compositions exist; phones get a calm stacked layout
+  gsap.matchMedia().add("(min-width: 768px)", () => {
+    // Both balance layers move together: the cut-out chair must stay aligned with the photo under it
+    scrub(".balance__img", ".balance", 4, -4);
+    scrub(".essence__chair--white", ".essence", 10, -10);
+    scrub(".essence__chair--pink", ".essence", -4, 6);
+  });
 }
 
 function footerWordmark() {
