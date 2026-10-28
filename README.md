@@ -2,12 +2,15 @@
 
 A front-end build of the NOIRÉ UI design (Figma: *💌 3 – UI Design*): a dark, editorial furniture store with a working cart, wishlist, filters and a three-step checkout.
 
-> Concept project. No real orders, payments or accounts: cart and wishlist live in the browser's `localStorage` and the forms only validate locally.
+> **UI/UX concept project by Tatiana Tulbure — not a real store.** Designed in Figma, built with Astro & GSAP, deployed on Vercel.
+>
+> No real orders, payments or accounts: cart and wishlist live in the browser's `localStorage` and the forms only validate locally.
 
 ## Stack
 
 - [Astro 7](https://astro.build) — static site, no UI framework
 - Vanilla TypeScript for the interactive parts (`src/scripts`)
+- [GSAP](https://gsap.com) (ScrollTrigger, SplitText, Flip) for motion, disabled under `prefers-reduced-motion`
 - Fluid em-based scaling from the 1920px Figma frame (`src/styles/global.css`)
 - Fonts: Cormorant Garamond + Raleway (Google Fonts)
 
