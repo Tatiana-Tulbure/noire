@@ -54,6 +54,6 @@ src/
 public/assets/images/   optimised WebP images exported from Figma
 ```
 
-## Deploy
+## Live
 
-It's a static site, so any static host works (Vercel, Netlify, GitHub Pages). Build command `npm run build`, output folder `dist`. Update `site` in `astro.config.mjs` to the final URL.
+https://noire-furniture.vercel.app — deployed on Vercel; every push to `main` redeploys automatically.
