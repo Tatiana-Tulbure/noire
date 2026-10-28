@@ -1,0 +1,13 @@
+.env
+.env.*
+design-source/
+_starter-backup/
+.claude/
+best-practice/
+CLAUDE.md
+DESIGN-SYSTEM.md
+AGENTS.md
+LICENSE
+node_modules/
+dist/
+.astro/
