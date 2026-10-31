@@ -10,7 +10,7 @@ All images were exported from the Figma file through the Figma REST API (image f
 | essence-white-chair.webp | 1785×1785 | WebP | 56 KB | OK |
 | essence-pink-chair.webp | 1640×1595 | WebP | 52 KB | OK |
 | collection-hero.webp | 1000×1000 | WebP | 30 KB | OK |
-| login-room.webp | 1024×1024 | WebP | 15 KB | OK |
+| login-room.webp | 1024×1024 | WebP | 104 KB | OK (updated: burgundy lounge chair, red-lit interior) |
 | order-lounge-chair.webp | 800×800 | WebP | 25 KB | OK |
 | product-fat-lounge-chair.webp | 1400×1400 | WebP | 129 KB | OK |
 | fat-detail-1.webp | 600×600 | WebP | 38 KB | OK |
