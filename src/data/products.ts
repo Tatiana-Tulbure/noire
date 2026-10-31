@@ -64,6 +64,11 @@ export const products: Product[] = [
     description: "A curved sofa upholstered in blush textured fabric, designed to soften the room and invite conversation.",
   },
   {
+    slug: "eclipse-lounge-chair", name: "Eclipse Lounge Chair", price: 2000, image: "product-eclipse-lounge-chair",
+    category: "Lounge chairs", group: "seating", rooms: ["Living room", "Bedroom"], colors: ["Pink"], materials: ["Velvet", "Metal"],
+    description: "A winged lounge chair in burgundy velvet on a slim four-star swivel base, with a lumbar cushion for long, quiet evenings.",
+  },
+  {
     slug: "bloom-pouf", name: "Bloom Pouf", price: 490, image: "product-bloom-pouf",
     category: "Accessories", group: "accessories", rooms: ["Bedroom", "Living room"], colors: ["Pink"], materials: ["Velvet"],
     description: "A playful velvet pouf with a soft backrest — an accent piece that adds color and comfort.",
@@ -182,7 +187,7 @@ export const bySlug = (slug: string): Product => {
 };
 
 /** Home sections, in Figma order */
-export const newArrivals = ["cloud-boucle-armchair", "luca-lounge-chair", "navy-velvet-dining-chair", "blush-curve-sofa", "bloom-pouf"].map(bySlug);
+export const newArrivals = ["cloud-boucle-armchair", "luca-lounge-chair", "navy-velvet-dining-chair", "blush-curve-sofa", "eclipse-lounge-chair"].map(bySlug);
 export const homeTeaser = ["pheaby-pedestal-chair", "rows-table", "pheaby-walnut-lounge-chair"].map(bySlug);
 export const sales = ["getluky-chair", "roc-keyvisual-chair", "swivel-accent-chair", "orbit-swivel-chair", "emerald-shell-armchair"].map(bySlug);
 export const alsoLike = ["fat-2-5-seater", "fat-work-chair", "luca-dining-chair", "luna-swivel-chair", "riva-lounge-chair"].map(bySlug);
@@ -191,7 +196,7 @@ export const alsoLike = ["fat-2-5-seater", "fat-work-chair", "luca-dining-chair"
 export const collectionOrder = [
   "bubble-lounge-chair", "orbit-swivel-chair", "luna-swivel-chair", "riva-lounge-chair", "sienna-lounge-chair", "arc-dining-chair",
   "roll-sofa", "modulo-corner-sofa", "fat-lounge-chair", "cloud-boucle-armchair", "luca-lounge-chair", "navy-velvet-dining-chair",
-  "blush-curve-sofa", "bloom-pouf", "pheaby-pedestal-chair", "rows-table", "pheaby-walnut-lounge-chair", "getluky-chair", "roc-keyvisual-chair",
+  "blush-curve-sofa", "eclipse-lounge-chair", "bloom-pouf", "pheaby-pedestal-chair", "rows-table", "pheaby-walnut-lounge-chair", "getluky-chair", "roc-keyvisual-chair",
   "swivel-accent-chair", "fat-2-5-seater", "fat-work-chair", "luca-dining-chair", "velvet-sculpted-armchair", "roll-mustard-chair",
   "emerald-shell-armchair", "olive-classic-sofa",
 ].map(bySlug);
